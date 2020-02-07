@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vnevzorov.Shop.model.Order;
 import ru.vnevzorov.Shop.model.User;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootApplication
-public class ShopApplication implements CommandLineRunner {
+public class ShopApplication extends SpringBootServletInitializer { //implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ShopApplication.class, args);
@@ -26,10 +27,10 @@ public class ShopApplication implements CommandLineRunner {
 	@Autowired
 	OrderRepository orderRepository;
 
-	@Override
+	/*@Override
 	public void run(String... args) throws Exception {
 
-/*		User user1 = new User("firstUser", "123", "name1");
+*//*		User user1 = new User("firstUser", "123", "name1");
 		User user2 = new User("secondUser", "123", "name2");
 		User user3 = new User("thirdUser", "123", "name3");
 
@@ -52,6 +53,6 @@ public class ShopApplication implements CommandLineRunner {
 		User dbUser2 = userRepository.findByLogin("thirdUser");
 		System.out.println("dbUser2 = " + dbUser2);
 
-		//dbUser2.getOrders().forEach(System.out::println);*/
-	}
+		//dbUser2.getOrders().forEach(System.out::println);*//*
+	}*/
 }

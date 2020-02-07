@@ -25,6 +25,11 @@ public class Category {
         this.name = name;
     }
 
+    public Category(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return "Category{" +
@@ -47,6 +52,10 @@ public class Category {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, products);
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Integer getId() {
