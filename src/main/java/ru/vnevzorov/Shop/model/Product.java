@@ -1,5 +1,8 @@
 package ru.vnevzorov.Shop.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import ru.vnevzorov.Shop.repository.CategoryRepository;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +82,10 @@ public class Product {
 
     public List<Supplier> getSuppliers() {
         return suppliers;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {

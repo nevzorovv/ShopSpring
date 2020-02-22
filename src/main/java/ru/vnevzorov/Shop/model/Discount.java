@@ -30,8 +30,8 @@ public class Discount {
     @Override
     public String toString() {
         return "Discount{" +
-                "value=" + value +
-                ", id=" + id +
+                "id=" + id +
+                ", value=" + value +
                 ", type='" + type + '\'' +
                 '}';
     }

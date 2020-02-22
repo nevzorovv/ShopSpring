@@ -1,5 +1,7 @@
 package ru.vnevzorov.Shop;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,7 @@ import java.time.LocalDateTime;
 @Component
 @Profile("dev")
 public class DatabaseCreator {
+    private static final Logger log = LogManager.getLogger();
 
     @Autowired
     UserRepository userRepository;
@@ -47,6 +50,8 @@ public class DatabaseCreator {
         categoryRepository.save(goodForHouseCategory);
         categoryRepository.save(booksCategory);
 
+        categoryRepository.findAll().forEach(log::info);
+
         Discount discount1 = new Discount(10.0, "%");
         Discount discount2 = new Discount(15.0, "%");
         Discount discount3 = new Discount(10.0, "$");
@@ -57,6 +62,8 @@ public class DatabaseCreator {
         discountRepository.save(discount3);
         discountRepository.save(discount4);
         discountRepository.save(discount5);
+
+        discountRepository.findAll().forEach(log::info);
 
         Payment cashPayment = new Payment("cash");
         Payment onlinePayment = new Payment("online");
@@ -87,6 +94,8 @@ public class DatabaseCreator {
         productRepository.save(iPhone10Product);
         productRepository.save(matebookXProProduct);
         productRepository.save(evgeniOneginProduct);
+
+        productRepository.findAll().forEach(log::info);
 
         User user1 = new User("firstUser", "123", "name1");
         User user2 = new User("secondUser", "123", "name2");
