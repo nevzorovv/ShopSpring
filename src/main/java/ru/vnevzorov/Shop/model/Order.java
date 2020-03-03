@@ -17,9 +17,7 @@ public class Order {
     private LocalDateTime date;
     private Double totalPrice;
 
-    //TODO если добавить каскад в аннотацию, то ошибка. Почему?
-    @ManyToOne(/*cascade = CascadeType.ALL*/)
-    //@JoinColumn(name = "user_login", referencedColumnName = "login")
+    @ManyToOne()
     private User user;
 
     @ManyToOne
@@ -33,11 +31,10 @@ public class Order {
     inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Product> products = new ArrayList<>();
 
-
     public Order() {
     }
 
-    public Order(String number, LocalDateTime date, User user, Payment payment, Double totalPrice, Shipment shipment) {
+    public Order(String number, LocalDateTime date, User user, Payment payment, Double totalPrice, Shipment shipment/*, Purchase purchase*/) {
         this.number = number;
         this.date = date;
         this.user = user;
@@ -70,20 +67,21 @@ public class Order {
                 Objects.equals(totalPrice, order.totalPrice) &&
                 Objects.equals(user, order.user) &&
                 Objects.equals(payment, order.payment) &&
-                Objects.equals(shipment, order.shipment);
+                Objects.equals(shipment, order.shipment) &&
+                Objects.equals(products, order.products);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, number, date, totalPrice, user, payment, shipment);
-    }
-
-    public List<Product> getProducts() {
-        return products;
+        return Objects.hash(id, number, date, totalPrice, user, payment, shipment, products);
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNumber() {
@@ -132,5 +130,13 @@ public class Order {
 
     public void setShipment(Shipment shipment) {
         this.shipment = shipment;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 }

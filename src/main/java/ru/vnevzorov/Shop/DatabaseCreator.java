@@ -95,7 +95,7 @@ public class DatabaseCreator {
         productRepository.save(matebookXProProduct);
         productRepository.save(evgeniOneginProduct);
 
-        productRepository.findAll().forEach(log::info);
+        //productRepository.findAll().forEach(log::info);
 
         User user1 = new User("firstUser", "123", "name1");
         User user2 = new User("secondUser", "123", "name2");

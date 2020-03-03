@@ -1,8 +1,5 @@
 package ru.vnevzorov.Shop.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import ru.vnevzorov.Shop.repository.CategoryRepository;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +31,11 @@ public class Product {
     @JoinTable(name = "product_supplier", joinColumns = @JoinColumn(name = "product_id"),
     inverseJoinColumns = @JoinColumn(name = "supplier_id"))
     private List<Supplier> suppliers = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(name = "shoppingcart_product", joinColumns = @JoinColumn(name = "product_id"),
+    inverseJoinColumns = @JoinColumn(name = "shoppingcart_id"))
+    private List<ShoppingCart> shoppingCarts = new ArrayList<>();
 
     public Product() {
     }
@@ -68,36 +70,23 @@ public class Product {
                 Objects.equals(model, product.model) &&
                 Objects.equals(price, product.price) &&
                 Objects.equals(category, product.category) &&
-                Objects.equals(discount, product.discount);
+                Objects.equals(discount, product.discount) &&
+                Objects.equals(orders, product.orders) &&
+                Objects.equals(suppliers, product.suppliers) &&
+                Objects.equals(shoppingCarts, product.shoppingCarts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, manufacturer, model, price, category, discount);
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public List<Supplier> getSuppliers() {
-        return suppliers;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+        return Objects.hash(id, manufacturer, model, price, category, discount, orders, suppliers, shoppingCarts);
     }
 
     public Long getId() {
         return id;
     }
 
-    public Discount getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(Discount discount) {
-        this.discount = discount;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getManufacturer() {
@@ -130,5 +119,37 @@ public class Product {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Discount getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Discount discount) {
+        this.discount = discount;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public List<Supplier> getSuppliers() {
+        return suppliers;
+    }
+
+    public void setSuppliers(List<Supplier> suppliers) {
+        this.suppliers = suppliers;
+    }
+
+    public List<ShoppingCart> getShoppingCarts() {
+        return shoppingCarts;
+    }
+
+    public void setShoppingCarts(List<ShoppingCart> shoppingCarts) {
+        this.shoppingCarts = shoppingCarts;
     }
 }

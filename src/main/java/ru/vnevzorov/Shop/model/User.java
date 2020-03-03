@@ -17,8 +17,11 @@ public class User {
     private String firstName;
 
     //Тут колонка не создается. Сюда подтянутся все заказы юзера
-    @OneToMany(mappedBy = "user"/*, fetch=FetchType.EAGER*/) // "user" - это поле в Order
+    @OneToMany(mappedBy = "user") // "user" - это поле в Order
     private List<Order> orders = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    private ShoppingCart shoppingCart;
 
     public User() {}
 
@@ -52,16 +55,15 @@ public class User {
         User user = (User) o;
         return Objects.equals(id, user.id) &&
                 Objects.equals(login, user.login) &&
-                Objects.equals(password, user.password);
+                Objects.equals(password, user.password) &&
+                Objects.equals(firstName, user.firstName) &&
+                Objects.equals(orders, user.orders) &&
+                Objects.equals(shoppingCart, user.shoppingCart);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, login, password);
-    }
-
-    public List<Order> getOrders() {
-        return orders;
+        return Objects.hash(id, login, password, firstName, orders, shoppingCart);
     }
 
     public Long getId() {
@@ -86,5 +88,29 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public ShoppingCart getShoppingCart() {
+        return shoppingCart;
+    }
+
+    public void setShoppingCart(ShoppingCart shoppingCart) {
+        this.shoppingCart = shoppingCart;
     }
 }

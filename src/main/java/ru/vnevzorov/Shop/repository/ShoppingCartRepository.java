@@ -2,13 +2,10 @@ package ru.vnevzorov.Shop.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import ru.vnevzorov.Shop.model.ShoppingCart;
 import ru.vnevzorov.Shop.model.User;
 
-import javax.persistence.Id;
-
 @Repository
-public interface UserRepository extends CrudRepository<User, Long> {
-    User findByLogin(String login);
-
-    User findById(Id id); //??????
+public interface ShoppingCartRepository extends CrudRepository<ShoppingCart, Long> {
+    ShoppingCart findByUser(User user);
 }

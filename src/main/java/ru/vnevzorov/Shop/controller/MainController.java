@@ -4,37 +4,54 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.vnevzorov.Shop.model.Category;
 import ru.vnevzorov.Shop.model.Product;
 import ru.vnevzorov.Shop.repository.CategoryRepository;
+import ru.vnevzorov.Shop.repository.DiscountRepository;
 import ru.vnevzorov.Shop.repository.OrderRepository;
 import ru.vnevzorov.Shop.repository.ProductRepository;
+import ru.vnevzorov.Shop.service.CategoryService;
+import ru.vnevzorov.Shop.service.ProductService;
+
+import java.util.Arrays;
 
 @Controller
 public class MainController {
     private static final Logger log = LogManager.getLogger();
 
     @Autowired
-    CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
 
     @Autowired
-    OrderRepository orderRepository;
+    private OrderRepository orderRepository;
 
     @Autowired
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
+
+    @Autowired
+    private DiscountRepository discountRepository;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @GetMapping("mainpage")
     public ModelAndView getMainpage() {
         log.info("GET: /mainpage");
 
-        ModelAndView modelAndView = new ModelAndView("mainpage.jsp");
-        Iterable<Category> categories = categoryRepository.findAll();
+        ModelAndView modelAndView = new ModelAndView("jsp/mainpage.jsp");
+        Iterable<Category> categories = categoryService.getAll();
         modelAndView.addObject("categories", categories);
         modelAndView.addObject("category", new Category());
+        modelAndView.addObject("number_of_positions", 10);
 
         log.info("returning model:" + modelAndView.getModel().toString());
 
@@ -45,14 +62,13 @@ public class MainController {
     public ModelAndView getAddProduct() {
         log.info("GET: /addproduct");
 
-        ModelAndView modelAndView = new ModelAndView("addproduct.jsp");
-        //Iterable<Product> products = productRepository.findAll();
-
+        ModelAndView modelAndView = new ModelAndView("jsp/addproduct.jsp");
         Product newProduct = new Product();
         modelAndView.addObject("product", newProduct);
 
-        Iterable<Category> categories = categoryRepository.findAll();
+        Iterable<Category> categories = categoryService.getAll();
         modelAndView.addObject("categories", categories);
+        modelAndView.addObject("discount_type", Arrays.asList("$", "%"));
 
         log.info("returning model:" + modelAndView.getModel().toString());
 
@@ -63,12 +79,10 @@ public class MainController {
     public RedirectView saveProduct(@ModelAttribute Product product) {
         log.info("POST: /saveProduct, product: " + product.toString());
 
-        productRepository.save(product);
+        productService.saveProduct(product);
+
         String category = product.getCategory().getName();
         RedirectView redirectView = new RedirectView("products" + "?category=" + category);
-
-        //log.info("returning model:" + modelAndView.getModel().toString());
-        //log.info("returning view:" + modelAndView.getViewName());
 
         return redirectView;
     }
@@ -76,15 +90,15 @@ public class MainController {
     @GetMapping("products")
     public ModelAndView showAllProducts(@RequestParam("category") String categoryName) {
         log.info("GET: /products" + "?category=" + categoryName);
-        ModelAndView modelAndView = new ModelAndView("products.jsp");
+        ModelAndView modelAndView = new ModelAndView("jsp/products.jsp");
         //Iterable<Product> products = productRepository.findAll();
 
-        Category category = categoryRepository.findByName(categoryName);
-        Iterable<Product> products = productRepository.getProductsByCategory(category);
+        Category category = categoryService.getByName(categoryName);
+        Iterable<Product> products = productService.getProductsByCategory(category);
         modelAndView.addObject("category_name", categoryName);
         modelAndView.addObject("products", products);
 
-        Iterable<Category> categories = categoryRepository.findAll();
+        Iterable<Category> categories = categoryService.getAll();
         modelAndView.addObject("categories", categories);
         modelAndView.addObject("category", new Category());
 
@@ -95,20 +109,20 @@ public class MainController {
     public ModelAndView showProducts(@ModelAttribute Category selectedCategory) {
         log.info("POST: /products, category: " + selectedCategory.toString());
 
-        ModelAndView modelAndView = new ModelAndView("products.jsp");
+        ModelAndView modelAndView = new ModelAndView("jsp/products.jsp");
 
-        Iterable<Category> categories = categoryRepository.findAll();
+        Iterable<Category> categories = categoryService.getAll();
         modelAndView.addObject("categories", categories);
         modelAndView.addObject("category", new Category());
 
         Iterable<Product> products;
         if (selectedCategory != null && selectedCategory.getName().length() > 2) {
-            Category category = categoryRepository.findByName(selectedCategory.getName());
-            products = productRepository.getProductsByCategory(category);
+            Category category = categoryService.getByName(selectedCategory.getName());
+            products = productService.getProductsByCategory(category);
             modelAndView.addObject("category_name", category.getName());
         } else {
             modelAndView.addObject("category_name", "All products");
-            products = productRepository.findAll();
+            products = productService.getAll();
         }
         modelAndView.addObject("products", products);
 
@@ -118,10 +132,12 @@ public class MainController {
         return modelAndView;
     }
 
+    /*********************************  TEST  *****************************/
+
     @GetMapping("hello")
     //@RequestMapping("hello")
     public ModelAndView helloWorld() { //ModelAndView - специальный класс для передачи данных для jsp
-        ModelAndView modelAndView = new ModelAndView("helloworld.jsp");
+        ModelAndView modelAndView = new ModelAndView("jsp/helloworld.jsp");
         modelAndView.addObject("hello", "this is JSP");
         Category category = categoryRepository.findById(1).get();
         modelAndView.addObject("category", category);

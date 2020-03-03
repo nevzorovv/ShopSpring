@@ -8,6 +8,8 @@
 </head>
 <body>
 
+<%@ include file="basket_footer.jsp" %>
+
 <header>Main Page</header>
 
 <%--<nav>
@@ -17,9 +19,10 @@
         </li>
     </c:forEach>
 </nav>--%>
+
 <section>
     <form:form method="post" action="products" modelAttribute="category">
-        <form:select path="name">
+        <form:select path="name" >
             <form:option value="" label="-Please select-"/>
             <form:options items="${categories}" itemValue="name" itemLabel="name"/>
             <input type="submit" value="search">

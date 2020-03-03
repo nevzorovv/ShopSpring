@@ -1,5 +1,4 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,26 +6,20 @@
     <link type="text/css" rel="stylesheet" href="styles.css" media="all">
 </head>
 <body>
+<%@ include file="basket_footer.jsp" %>
 
-<header>${category_name}</header>
+<header>Your shopping cart</header>
 
 <section>
-    <form:form method="post" action="products" modelAttribute="category">
-        <form:select path="name">
-            <form:option value="" label="-Please select-"/>
-            <form:options items="${categories}" itemValue="name" itemLabel="name"/>
-            <input type="submit" value="search">
-        </form:select>
-    </form:form>
-
-    <table style="padding: 20px">
+<table style="padding: 20px">
     <tr>
         <th>Manufacturer</th>
         <th>Model</th>
         <th>Price</th>
         <th>Discount</th>
+        <th></th>
     </tr>
-    <c:forEach items="${products}" var="product">
+    <c:forEach items="${buyingProducts}" var="product">
         <tr>
             <th>${product.manufacturer}</th>
             <th>${product.model}</th>
@@ -35,8 +28,10 @@
         </tr>
     </c:forEach>
 </table>
+    <p>Total discount: ${totalDiscount}</p>
+    <p>Total price: ${totalPrice}</p>
 
-<button name="addProduct" id="addProduct" onclick="document.location='addproduct'">Add product</button>
+<a href="orderinformation?id=${shoppingCartId}"><button type="submit">Confirm order</button></a>
 </section>
 </body>
 </html>

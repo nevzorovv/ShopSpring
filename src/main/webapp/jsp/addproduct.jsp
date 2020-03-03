@@ -25,6 +25,12 @@
         <p>Price:
             <form:input path="price"/>
         </p>
+        <p>Discount:
+            <form:input path="discount.value"/>
+            <form:select path="discount.type">
+                <form:options items="${discount_type}"/>
+            </form:select>
+        </p>
             <form:hidden path="id"/>
         <input type="submit" value="save">
     </form:form>
