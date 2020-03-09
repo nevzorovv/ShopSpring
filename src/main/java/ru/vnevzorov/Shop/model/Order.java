@@ -26,15 +26,18 @@ public class Order {
     @ManyToOne
     private Shipment shipment;
 
-    @ManyToMany
-    @JoinTable(name = "order_product", joinColumns = @JoinColumn(name = "order_id"),
-    inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private List<Product> products = new ArrayList<>();
+    /*@ManyToMany
+    @JoinTable(name = "order_orderedproduct", joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "orderedproduct_id"))
+    private List<OrderedProduct> orderedProducts = new ArrayList<>();*/
+
+    @OneToMany
+    private List<OrderedProduct> orderedProducts = new ArrayList<>();
 
     public Order() {
     }
 
-    public Order(String number, LocalDateTime date, User user, Payment payment, Double totalPrice, Shipment shipment/*, Purchase purchase*/) {
+    public Order(String number, LocalDateTime date, User user, Payment payment, Double totalPrice, Shipment shipment) {
         this.number = number;
         this.date = date;
         this.user = user;
@@ -68,12 +71,12 @@ public class Order {
                 Objects.equals(user, order.user) &&
                 Objects.equals(payment, order.payment) &&
                 Objects.equals(shipment, order.shipment) &&
-                Objects.equals(products, order.products);
+                Objects.equals(orderedProducts, order.orderedProducts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, number, date, totalPrice, user, payment, shipment, products);
+        return Objects.hash(id, number, date, totalPrice, user, payment, shipment, orderedProducts);
     }
 
     public Long getId() {
@@ -132,11 +135,11 @@ public class Order {
         this.shipment = shipment;
     }
 
-    public List<Product> getProducts() {
-        return products;
+    public List<OrderedProduct> getOrderedProducts() {
+        return orderedProducts;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setOrderedProducts(List<OrderedProduct> orderedProducts) {
+        this.orderedProducts = orderedProducts;
     }
 }

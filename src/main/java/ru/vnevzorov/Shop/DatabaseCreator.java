@@ -105,15 +105,14 @@ public class DatabaseCreator {
         userRepository.save(user3);
 
         Order order1 = new Order("A12", LocalDateTime.now(), user1, cashPayment, 1.0, pickupShipment);
-        order1.getProducts().add(iPhone10Product);
-        order1.getProducts().add(matebookXProProduct);
+        /*order1.getProducts().add(iPhone10Product);
+        order1.getProducts().add(matebookXProProduct);*/
 
         Order order2 = new Order("A13", LocalDateTime.now(), user1, onlinePayment, 80000.0, pickpointShipment);
         Order order3 = new Order("A14", LocalDateTime.now(), user2, debitPayment, 100000.0, courierShipment);
         orderRepository.save(order1);
         orderRepository.save(order2);
         orderRepository.save(order3);
-
     }
 
 

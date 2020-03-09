@@ -4,4 +4,7 @@ import org.springframework.data.repository.CrudRepository;
 import ru.vnevzorov.Shop.model.Shipment;
 
 public interface ShipmentRepository extends CrudRepository<Shipment, String> {
+
+    Shipment findByType(String type);
+
 }

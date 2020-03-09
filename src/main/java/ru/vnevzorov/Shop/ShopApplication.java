@@ -10,12 +10,13 @@ import ru.vnevzorov.Shop.model.Order;
 import ru.vnevzorov.Shop.model.User;
 import ru.vnevzorov.Shop.repository.OrderRepository;
 import ru.vnevzorov.Shop.repository.UserRepository;
+import ru.vnevzorov.Shop.service.TestEntityService;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootApplication
-public class ShopApplication extends SpringBootServletInitializer { //implements CommandLineRunner {
+public class ShopApplication extends SpringBootServletInitializer implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ShopApplication.class, args);
@@ -26,6 +27,17 @@ public class ShopApplication extends SpringBootServletInitializer { //implements
 
 	@Autowired
 	OrderRepository orderRepository;
+
+	@Autowired
+	TestEntityService testEntityService;
+
+	@Override
+	public void run(String... args) throws Exception {
+		testEntityService.test();
+		//testEntityService.test1();
+		//testEntityService.test3Lazy();
+
+	}
 
 	/*@Override
 	public void run(String... args) throws Exception {

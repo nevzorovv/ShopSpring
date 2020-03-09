@@ -1,4 +1,5 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -17,14 +18,28 @@
         <th>Model</th>
         <th>Price</th>
         <th>Discount</th>
+        <th>Quantity</th>
+        <th></th>
         <th></th>
     </tr>
-    <c:forEach items="${buyingProducts}" var="product">
+    <c:forEach items="${orderedProducts}" var="orderedProduct">
         <tr>
-            <th>${product.manufacturer}</th>
-            <th>${product.model}</th>
-            <th>${product.price}</th>
-            <th>${product.discount.value} ${product.discount.type}</th>
+            <th>${orderedProduct.product.manufacturer}</th>
+            <th>${orderedProduct.product.model}</th>
+            <th>${orderedProduct.product.price}</th>
+            <th>${orderedProduct.product.discount.value} ${orderedProduct.product.discount.type}</th>
+            <form method="post" action="/changeQuantity">
+                <th>
+                    <input type="text" name="quantity" id="quantity" value="${orderedProduct.quantity}" style="width: 50px">
+                    <input type="hidden" name="orderedProductId" value="${orderedProduct.id}">
+                </th>
+                <th><%--Кнопка очень маленькая--%>
+                    <input type="submit" value="recalculate">
+                </th>
+            </form>
+            <th>
+                <a href="deleteOrderedProduct?id=${orderedProduct.id}"><button type="submit">delete</button></a>
+            </th>
         </tr>
     </c:forEach>
 </table>

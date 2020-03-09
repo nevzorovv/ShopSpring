@@ -23,19 +23,12 @@ public class Product {
     private Discount discount;
 
     @ManyToMany
-    @JoinTable(name = "order_product", joinColumns = @JoinColumn(name = "product_id"),
-    inverseJoinColumns = @JoinColumn(name = "order_id"))
-    private List<Order> orders = new ArrayList<>();
-
-    @ManyToMany
     @JoinTable(name = "product_supplier", joinColumns = @JoinColumn(name = "product_id"),
     inverseJoinColumns = @JoinColumn(name = "supplier_id"))
     private List<Supplier> suppliers = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(name = "shoppingcart_product", joinColumns = @JoinColumn(name = "product_id"),
-    inverseJoinColumns = @JoinColumn(name = "shoppingcart_id"))
-    private List<ShoppingCart> shoppingCarts = new ArrayList<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<OrderedProduct> orderedProducts = new ArrayList<>();
 
     public Product() {
     }
@@ -71,14 +64,13 @@ public class Product {
                 Objects.equals(price, product.price) &&
                 Objects.equals(category, product.category) &&
                 Objects.equals(discount, product.discount) &&
-                Objects.equals(orders, product.orders) &&
                 Objects.equals(suppliers, product.suppliers) &&
-                Objects.equals(shoppingCarts, product.shoppingCarts);
+                Objects.equals(orderedProducts, product.orderedProducts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, manufacturer, model, price, category, discount, orders, suppliers, shoppingCarts);
+        return Objects.hash(id, manufacturer, model, price, category, discount, suppliers, orderedProducts);
     }
 
     public Long getId() {
@@ -129,14 +121,6 @@ public class Product {
         this.discount = discount;
     }
 
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
-
     public List<Supplier> getSuppliers() {
         return suppliers;
     }
@@ -145,11 +129,11 @@ public class Product {
         this.suppliers = suppliers;
     }
 
-    public List<ShoppingCart> getShoppingCarts() {
-        return shoppingCarts;
+    public List<OrderedProduct> getOrderedProducts() {
+        return orderedProducts;
     }
 
-    public void setShoppingCarts(List<ShoppingCart> shoppingCarts) {
-        this.shoppingCarts = shoppingCarts;
+    public void setOrderedProducts(List<OrderedProduct> orderedProducts) {
+        this.orderedProducts = orderedProducts;
     }
 }
