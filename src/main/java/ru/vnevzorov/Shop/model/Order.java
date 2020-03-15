@@ -1,5 +1,7 @@
 package ru.vnevzorov.Shop.model;
 
+import ru.vnevzorov.Shop.enumeration.Status;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,6 +28,9 @@ public class Order {
     @ManyToOne
     private Shipment shipment;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     /*@ManyToMany
     @JoinTable(name = "order_orderedproduct", joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "orderedproduct_id"))
@@ -37,13 +42,14 @@ public class Order {
     public Order() {
     }
 
-    public Order(String number, LocalDateTime date, User user, Payment payment, Double totalPrice, Shipment shipment) {
+    public Order(String number, LocalDateTime date, User user, Payment payment, Double totalPrice, Shipment shipment, Status status) {
         this.number = number;
         this.date = date;
         this.user = user;
         this.payment = payment;
         this.totalPrice = totalPrice;
         this.shipment = shipment;
+        this.status = status;
     }
 
     @Override
@@ -56,6 +62,7 @@ public class Order {
                 ", user=" + user +
                 ", payment=" + payment +
                 ", shipment=" + shipment +
+                ", status=" + status +
                 '}';
     }
 
@@ -71,12 +78,13 @@ public class Order {
                 Objects.equals(user, order.user) &&
                 Objects.equals(payment, order.payment) &&
                 Objects.equals(shipment, order.shipment) &&
+                status == order.status &&
                 Objects.equals(orderedProducts, order.orderedProducts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, number, date, totalPrice, user, payment, shipment, orderedProducts);
+        return Objects.hash(id, number, date, totalPrice, user, payment, shipment, status, orderedProducts);
     }
 
     public Long getId() {
@@ -133,6 +141,14 @@ public class Order {
 
     public void setShipment(Shipment shipment) {
         this.shipment = shipment;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public List<OrderedProduct> getOrderedProducts() {

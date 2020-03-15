@@ -19,7 +19,7 @@ public class ShoppingCart {
     @OneToOne(optional = false)
     private User user;
 
-    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.PERSIST/*, orphanRemoval = true*/) //orphanRemoval = true указывает, что все объекты orderedProduct, не имеющие ссылку на корзину, будут удалены
+    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.PERSIST) //orphanRemoval = true указывает, что все объекты orderedProduct, не имеющие ссылку на корзину, будут удалены
     private List<OrderedProduct> orderedProducts = new ArrayList<>();
 
     /*@ManyToMany

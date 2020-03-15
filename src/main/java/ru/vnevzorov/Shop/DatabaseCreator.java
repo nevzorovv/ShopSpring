@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import ru.vnevzorov.Shop.enumeration.Status;
 import ru.vnevzorov.Shop.model.*;
 import ru.vnevzorov.Shop.repository.*;
 
@@ -97,19 +98,19 @@ public class DatabaseCreator {
 
         //productRepository.findAll().forEach(log::info);
 
-        User user1 = new User("firstUser", "123", "name1");
-        User user2 = new User("secondUser", "123", "name2");
-        User user3 = new User("thirdUser", "123", "name3");
+        User user1 = new User("firstUser", "123", "name1", "pupkin.1994@yandex.ru");
+        User user2 = new User("secondUser", "123", "name2", "mail2@mail.ru");
+        User user3 = new User("thirdUser", "123", "name3", "mail3@mail.ru");
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(user3);
 
-        Order order1 = new Order("A12", LocalDateTime.now(), user1, cashPayment, 1.0, pickupShipment);
+        Order order1 = new Order("A12", LocalDateTime.now(), user1, cashPayment, 1.0, pickupShipment, Status.CREATED);
         /*order1.getProducts().add(iPhone10Product);
         order1.getProducts().add(matebookXProProduct);*/
 
-        Order order2 = new Order("A13", LocalDateTime.now(), user1, onlinePayment, 80000.0, pickpointShipment);
-        Order order3 = new Order("A14", LocalDateTime.now(), user2, debitPayment, 100000.0, courierShipment);
+        Order order2 = new Order("A13", LocalDateTime.now(), user1, onlinePayment, 80000.0, pickpointShipment, Status.CREATED);
+        Order order3 = new Order("A14", LocalDateTime.now(), user2, debitPayment, 100000.0, courierShipment, Status.CREATED);
         orderRepository.save(order1);
         orderRepository.save(order2);
         orderRepository.save(order3);

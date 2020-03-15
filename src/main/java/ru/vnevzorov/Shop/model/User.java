@@ -1,5 +1,6 @@
 package ru.vnevzorov.Shop.model;
 
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,9 @@ public class User {
     private String password;
     private String firstName;
 
+    @Column(unique = true, nullable = false)
+    private String email;
+
     //Тут колонка не создается. Сюда подтянутся все заказы юзера
     @OneToMany(mappedBy = "user") // "user" - это поле в Order
     private List<Order> orders = new ArrayList<>();
@@ -25,17 +29,11 @@ public class User {
 
     public User() {}
 
-    public User(String login, String password, String firstName) {
+    public User(String login, String password, String firstName, String email) {
         this.login = login;
         this.password = password;
         this.firstName = firstName;
-    }
-
-    public User(Long id, String login, String password, String firstName) {
-        this.id = id;
-        this.login = login;
-        this.password = password;
-        this.firstName = firstName;
+        this.email = email;
     }
 
     @Override
@@ -43,8 +41,9 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", login='" + login + '\'' +
-                ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
+                ", email='" + email /*+ '\'' +
+                ", shoppingCart=" + shoppingCart*/ +
                 '}';
     }
 
@@ -57,13 +56,14 @@ public class User {
                 Objects.equals(login, user.login) &&
                 Objects.equals(password, user.password) &&
                 Objects.equals(firstName, user.firstName) &&
+                Objects.equals(email, user.email) &&
                 Objects.equals(orders, user.orders) &&
                 Objects.equals(shoppingCart, user.shoppingCart);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, login, password, firstName, orders, shoppingCart);
+        return Objects.hash(id, login, password, firstName, email, orders, shoppingCart);
     }
 
     public Long getId() {
@@ -96,6 +96,14 @@ public class User {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public List<Order> getOrders() {

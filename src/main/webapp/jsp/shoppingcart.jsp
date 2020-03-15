@@ -33,7 +33,7 @@
                     <input type="text" name="quantity" id="quantity" value="${orderedProduct.quantity}" style="width: 50px">
                     <input type="hidden" name="orderedProductId" value="${orderedProduct.id}">
                 </th>
-                <th><%--Кнопка очень маленькая--%>
+                <th>
                     <input type="submit" value="recalculate">
                 </th>
             </form>
