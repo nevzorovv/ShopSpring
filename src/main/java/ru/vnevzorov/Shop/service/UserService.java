@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vnevzorov.Shop.model.ShoppingCart;
-import ru.vnevzorov.Shop.model.User;
+import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.repository.UserRepository;
+
+/*import ru.vnevzorov.Shop.model.User;*/
 
 @Service
 public class UserService {

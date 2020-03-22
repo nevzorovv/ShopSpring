@@ -5,15 +5,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.transaction.annotation.Transactional;
-import ru.vnevzorov.Shop.model.Order;
-import ru.vnevzorov.Shop.model.User;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import ru.vnevzorov.Shop.repository.OrderRepository;
 import ru.vnevzorov.Shop.repository.UserRepository;
 import ru.vnevzorov.Shop.service.TestEntityService;
 
-import java.time.LocalDateTime;
-import java.util.List;
 
 @SpringBootApplication
 public class ShopApplication extends SpringBootServletInitializer implements CommandLineRunner {

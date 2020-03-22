@@ -10,7 +10,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.vnevzorov.Shop.model.Product;
 import ru.vnevzorov.Shop.model.ShoppingCart;
-import ru.vnevzorov.Shop.model.User;
+/*import ru.vnevzorov.Shop.model.User;*/
+import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.service.*;
 
 import javax.servlet.http.HttpServletRequest;

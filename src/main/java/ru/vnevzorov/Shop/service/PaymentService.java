@@ -2,7 +2,6 @@ package ru.vnevzorov.Shop.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.vnevzorov.Shop.model.Order;
 import ru.vnevzorov.Shop.model.Payment;
 import ru.vnevzorov.Shop.repository.PaymentRepository;
 

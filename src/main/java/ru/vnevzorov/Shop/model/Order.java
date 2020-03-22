@@ -1,6 +1,7 @@
 package ru.vnevzorov.Shop.model;
 
 import ru.vnevzorov.Shop.enumeration.Status;
+import ru.vnevzorov.Shop.model.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

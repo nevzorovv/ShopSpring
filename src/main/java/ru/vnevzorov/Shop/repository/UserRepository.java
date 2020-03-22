@@ -1,15 +1,15 @@
 package ru.vnevzorov.Shop.repository;
 
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.vnevzorov.Shop.model.ShoppingCart;
-import ru.vnevzorov.Shop.model.User;
+import ru.vnevzorov.Shop.model.user.User;
 
-import javax.persistence.Id;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Long> {
+@Transactional
+public interface UserRepository extends AbstractUserRepository<User> {
     User findByLogin(String login);
 
     User findById(String id);

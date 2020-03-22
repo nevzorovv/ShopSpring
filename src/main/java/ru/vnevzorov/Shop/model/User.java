@@ -1,4 +1,9 @@
+/*
 package ru.vnevzorov.Shop.model;
+
+
+*/
+/*import ru.vnevzorov.Shop.model.user.AbstractUser;*//*
 
 
 import javax.persistence.*;
@@ -8,7 +13,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User */
+/*extends AbstractUser*//*
+ {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_gen_seq")
     @SequenceGenerator(name = "user_gen_seq", initialValue = 1, allocationSize = 1, sequenceName = "user_seq")
@@ -42,8 +49,10 @@ public class User {
                 "id=" + id +
                 ", login='" + login + '\'' +
                 ", firstName='" + firstName + '\'' +
-                ", email='" + email /*+ '\'' +
-                ", shoppingCart=" + shoppingCart*/ +
+                ", email='" + email */
+/*+ '\'' +
+                ", shoppingCart=" + shoppingCart*//*
+ +
                 '}';
     }
 
@@ -122,3 +131,4 @@ public class User {
         this.shoppingCart = shoppingCart;
     }
 }
+*/

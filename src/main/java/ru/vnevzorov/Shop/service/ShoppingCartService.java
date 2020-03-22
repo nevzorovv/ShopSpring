@@ -5,7 +5,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.vnevzorov.Shop.model.*;
+import ru.vnevzorov.Shop.aspect.annotation.LogResult;
+import ru.vnevzorov.Shop.model.OrderedProduct;
+import ru.vnevzorov.Shop.model.Product;
+import ru.vnevzorov.Shop.model.ShoppingCart;
+import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.repository.ShoppingCartRepository;
 
 import java.util.List;
@@ -129,6 +133,7 @@ public class ShoppingCartService {
         userService.deleteCartFromUser(user);
     }
 
+    @LogResult
     public Integer calculateItems() {
         String login = "firstUser"; //FIXME
         User user = userService.getUserByLogin(login);

@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import ru.vnevzorov.Shop.enumeration.Status;
 import ru.vnevzorov.Shop.model.*;
+import ru.vnevzorov.Shop.model.user.Admin;
+import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.repository.*;
 
 import javax.annotation.PostConstruct;
@@ -40,6 +42,12 @@ public class DatabaseCreator {
 
     @Autowired
     SupplierRepository supplierRepository;
+
+    @Autowired
+    AdminRepository adminRepository;
+
+    @Autowired
+    AbstractUserRepository abstractUserRepository;
 
     @PostConstruct
     private void init() {
@@ -98,17 +106,21 @@ public class DatabaseCreator {
 
         //productRepository.findAll().forEach(log::info);
 
-        User user1 = new User("firstUser", "123", "name1", "pupkin.1994@yandex.ru");
+        /*User user1 = new User("firstUser", "123", "name1", "pupkin.1994@yandex.ru");
         User user2 = new User("secondUser", "123", "name2", "mail2@mail.ru");
         User user3 = new User("thirdUser", "123", "name3", "mail3@mail.ru");
         userRepository.save(user1);
         userRepository.save(user2);
-        userRepository.save(user3);
+        userRepository.save(user3);*/
+
+        User user1 = new User("firstUser", "123", "name1", "lastName1", "pupkin.1994@yandex.ru", "testUserField1", "testUserField2");
+        User user2 = new User("secondUser", "123", "name1", "lastName1", "testEmail", "testUserField1", "testUserField2");
+        Admin admin1 = new Admin("firstAdmin", "123", "name1", "lastName1", "testEmailAdmin", "testAdminField1", "testAdminField2");
+        userRepository.save(user1);
+        userRepository.save(user2);
+        abstractUserRepository.save(admin1);
 
         Order order1 = new Order("A12", LocalDateTime.now(), user1, cashPayment, 1.0, pickupShipment, Status.CREATED);
-        /*order1.getProducts().add(iPhone10Product);
-        order1.getProducts().add(matebookXProProduct);*/
-
         Order order2 = new Order("A13", LocalDateTime.now(), user1, onlinePayment, 80000.0, pickpointShipment, Status.CREATED);
         Order order3 = new Order("A14", LocalDateTime.now(), user2, debitPayment, 100000.0, courierShipment, Status.CREATED);
         orderRepository.save(order1);

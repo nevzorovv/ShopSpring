@@ -1,13 +1,15 @@
 package ru.vnevzorov.Shop.service;
 
-import org.apache.catalina.LifecycleState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vnevzorov.Shop.enumeration.Status;
-import ru.vnevzorov.Shop.model.*;
+import ru.vnevzorov.Shop.model.Order;
+import ru.vnevzorov.Shop.model.OrderedProduct;
+import ru.vnevzorov.Shop.model.ShoppingCart;
+import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.repository.OrderRepository;
 
 import java.time.LocalDateTime;

@@ -1,5 +1,7 @@
 package ru.vnevzorov.Shop.model;
 
+import ru.vnevzorov.Shop.model.user.User;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +42,6 @@ public class ShoppingCart {
                 "id=" + id +
                 ", totalPrice=" + totalPrice +
                 ", totalDiscount=" + totalDiscount +
-                ", user=" + user +
                 '}';
     }
 

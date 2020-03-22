@@ -13,7 +13,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import ru.vnevzorov.Shop.enumeration.Status;
 import ru.vnevzorov.Shop.model.Order;
 import ru.vnevzorov.Shop.model.ShoppingCart;
-import ru.vnevzorov.Shop.model.User;
+/*import ru.vnevzorov.Shop.model.User;*/
+import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.service.EmailService;
 import ru.vnevzorov.Shop.service.OrderService;
 import ru.vnevzorov.Shop.service.ShoppingCartService;
