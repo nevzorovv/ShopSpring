@@ -1,5 +1,8 @@
 package ru.vnevzorov.Shop.model;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ru.vnevzorov.Shop.enumeration.Status;
 import ru.vnevzorov.Shop.model.user.User;
 
@@ -10,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "orders")
 public class Order {
     @Id
@@ -32,13 +36,18 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    /*@ManyToMany
-    @JoinTable(name = "order_orderedproduct", joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "orderedproduct_id"))
-    private List<OrderedProduct> orderedProducts = new ArrayList<>();*/
-
-    @OneToMany
+    @OneToMany(mappedBy = "order")
     private List<OrderedProduct> orderedProducts = new ArrayList<>();
+
+    /***************Spring Data JPA Auditing*******************/
+    @Column(name = "created_date", nullable = false, updatable = false)
+    @CreatedDate
+    private long createdDate;
+
+    @Column(name = "modified_date")
+    @LastModifiedDate
+    private long modifiedDate;
+    /***************Spring Data JPA Auditing*******************/
 
     public Order() {
     }

@@ -1,13 +1,15 @@
-package ru.vnevzorov.Shop.service;
+package ru.vnevzorov.Shop.service.user;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vnevzorov.Shop.model.ShoppingCart;
 import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.repository.UserRepository;
+import ru.vnevzorov.Shop.service.ShoppingCartService;
 
 /*import ru.vnevzorov.Shop.model.User;*/
 
@@ -22,6 +24,7 @@ public class UserService {
     @Autowired
     ShoppingCartService shoppingCartService;
 
+    @Cacheable("users")
     public User getUserByLogin(String login) {
         return userRepository.findByLogin(login);
     }

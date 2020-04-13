@@ -36,7 +36,11 @@
                 <th>${product.price}</th>
                 <th>${product.discount.value} ${product.discount.type}</th>
                 <th>
-                    <a href="addToCart?id=${product.id}&category=${product.category.name}"><button type="submit">Add to Shopping cart</button></a>
+                    <%--<a href="addToCart?id=${product.id}&category=${product.category.name}"><button type="submit">Buy</button></a>--%>
+                    <form:form method="post" action="addToCart" modelAttribute="chosenProduct">
+                        <form:hidden path="id" value="${product.id}"/>
+                        <button>Buy</button>
+                    </form:form>
                 </th>
             </tr>
     </c:forEach>

@@ -1,6 +1,7 @@
 package ru.vnevzorov.Shop.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vnevzorov.Shop.model.Category;
@@ -36,11 +37,12 @@ public class ProductService {
         return productRepository.getProductsByCategory(category);
     }
 
+    @Cacheable("products")
     public Product getProductById(Long id) {
-        Product product = productRepository.findById(id).get();
-        return product;
+        return productRepository.findById(id).get();
     }
 
+    @Cacheable("productz")
     public Product getProductById(String id) {
         Product product = productRepository.findById(Long.parseLong(id)).get();
         return product;

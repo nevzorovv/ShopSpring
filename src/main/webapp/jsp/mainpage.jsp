@@ -25,8 +25,8 @@
         <form:select path="name" >
             <form:option value="" label="-Please select-"/>
             <form:options items="${categories}" itemValue="name" itemLabel="name"/>
-            <input type="submit" value="search">
         </form:select>
+        <input type="submit" value="search">
     </form:form>
 </section>
 </body>

@@ -28,15 +28,15 @@
             <th>${orderedProduct.product.model}</th>
             <th>${orderedProduct.product.price}</th>
             <th>${orderedProduct.product.discount.value} ${orderedProduct.product.discount.type}</th>
-            <form method="post" action="/changeQuantity">
+            <form:form method="post" action="/changeQuantity" modelAttribute="newQuantityObject">
                 <th>
-                    <input type="text" name="quantity" id="quantity" value="${orderedProduct.quantity}" style="width: 50px">
-                    <input type="hidden" name="orderedProductId" value="${orderedProduct.id}">
+                    <form:input path="quantity" value="${orderedProduct.quantity}" cssStyle="width: 50px"/>
+                    <form:hidden path="id" value="${orderedProduct.id}"/>
                 </th>
                 <th>
                     <input type="submit" value="recalculate">
                 </th>
-            </form>
+            </form:form>
             <th>
                 <a href="deleteOrderedProduct?id=${orderedProduct.id}"><button type="submit">delete</button></a>
             </th>

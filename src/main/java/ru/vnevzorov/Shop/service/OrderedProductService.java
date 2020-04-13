@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.vnevzorov.Shop.model.OrderedProduct;
 import ru.vnevzorov.Shop.model.ShoppingCart;
 import ru.vnevzorov.Shop.repository.OrderedProductRepository;
+import ru.vnevzorov.Shop.service.user.UserService;
 
 import java.util.Optional;
 
@@ -21,8 +22,16 @@ public class OrderedProductService {
         return orderedProductRepository.findById(Long.parseLong(id));
     }
 
-    public OrderedProduct getByCartAndId(ShoppingCart cart, String id) {
-        return orderedProductRepository.findByShoppingCartAndId(cart, Long.parseLong(id));
+    public OrderedProduct getByCartAndId(ShoppingCart cart, Long id) {
+        return orderedProductRepository.findByShoppingCartAndId(cart, id);
+    }
+
+    public Iterable<OrderedProduct> getAll() {
+        return orderedProductRepository.findAll();
+    }
+
+    public void save(OrderedProduct product) {
+        orderedProductRepository.save(product);
     }
 
     public void delete(OrderedProduct product) {

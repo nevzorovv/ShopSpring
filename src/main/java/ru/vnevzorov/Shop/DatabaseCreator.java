@@ -4,12 +4,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.vnevzorov.Shop.enumeration.Status;
 import ru.vnevzorov.Shop.model.*;
+import ru.vnevzorov.Shop.model.user.AbstractUser;
 import ru.vnevzorov.Shop.model.user.Admin;
 import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.repository.*;
+import ru.vnevzorov.Shop.service.user.AbstractUserService;
+import ru.vnevzorov.Shop.service.user.UserService;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
@@ -47,7 +51,13 @@ public class DatabaseCreator {
     AdminRepository adminRepository;
 
     @Autowired
-    AbstractUserRepository abstractUserRepository;
+    AbstractUserService abstractUserService;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @PostConstruct
     private void init() {
@@ -113,12 +123,20 @@ public class DatabaseCreator {
         userRepository.save(user2);
         userRepository.save(user3);*/
 
-        User user1 = new User("firstUser", "123", "name1", "lastName1", "pupkin.1994@yandex.ru", "testUserField1", "testUserField2");
+        User user1 = new User("firstUser", passwordEncoder.encode("123"), "name1", "lastName1", "/*pupkin.1994@yandex.ru*/", "testUserField1", "testUserField2");
         User user2 = new User("secondUser", "123", "name1", "lastName1", "testEmail", "testUserField1", "testUserField2");
-        Admin admin1 = new Admin("firstAdmin", "123", "name1", "lastName1", "testEmailAdmin", "testAdminField1", "testAdminField2");
+        Admin admin1 = new Admin("firstAdmin", "123", "name1", "lastName1", /*"testEmailAdmin"*/ "pupkin.1994@yandex.ru", "testAdminField1", "testAdminField2", true);
         userRepository.save(user1);
         userRepository.save(user2);
-        abstractUserRepository.save(admin1);
+        abstractUserService.save(admin1);
+
+        //TODO проверить функцию кэша
+        User user1test = userService.getUserByLogin("firstUser");
+        User user2test = userService.getUserByLogin("secondUser");
+        User user1test2 = userService.getUserByLogin("firstUser");
+
+        Iterable<AbstractUser> users = abstractUserService.getAll();
+        Iterable<AbstractUser> users1 = abstractUserService.getAll();
 
         Order order1 = new Order("A12", LocalDateTime.now(), user1, cashPayment, 1.0, pickupShipment, Status.CREATED);
         Order order2 = new Order("A13", LocalDateTime.now(), user1, onlinePayment, 80000.0, pickpointShipment, Status.CREATED);

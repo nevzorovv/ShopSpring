@@ -1,6 +1,7 @@
 package ru.vnevzorov.Shop.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,6 +13,7 @@ public class Category {
     @SequenceGenerator(name = "categ_gen_seq", initialValue = 1, allocationSize = 1, sequenceName = "categ_seq")
     private Integer id;
 
+    @NotBlank
     @Column(unique = true)
     private String name;
 

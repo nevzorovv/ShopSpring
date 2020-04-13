@@ -1,9 +1,14 @@
 package ru.vnevzorov.Shop.model.user;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class AbstractUser {
     @Id
@@ -25,6 +30,16 @@ public abstract class AbstractUser {
 
     @Column(unique = true, nullable = false)
     private String email;
+
+    /***************Spring Data JPA Auditing*******************/
+    @Column(name = "created_date", nullable = false, updatable = false)
+    @CreatedDate
+    private long createdDate;
+
+    @Column(name = "modified_date")
+    @LastModifiedDate
+    private long modifiedDate;
+    /***************Spring Data JPA Auditing*******************/
 
     public AbstractUser() {
     }

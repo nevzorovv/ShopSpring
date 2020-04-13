@@ -22,7 +22,7 @@ public class User extends AbstractUser {
     @OneToMany(mappedBy = "user") // "user" - это поле в Order
     private List<Order> orders = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(/*mappedBy = "user"*/)
     private ShoppingCart shoppingCart;
 
     public User() {
@@ -43,7 +43,7 @@ public class User extends AbstractUser {
                 '}';
     }
 
-    @Override
+    /*@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -53,12 +53,12 @@ public class User extends AbstractUser {
                 Objects.equals(testField2, user.testField2) &&
                 Objects.equals(orders, user.orders) &&
                 Objects.equals(shoppingCart, user.shoppingCart);
-    }
+    }*/
 
-    @Override
+    /*@Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), testField1, testField2, orders, shoppingCart);
-    }
+    }*/
 
     public String getTestField1() {
         return testField1;

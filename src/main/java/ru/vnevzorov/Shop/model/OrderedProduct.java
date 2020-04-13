@@ -1,9 +1,14 @@
 package ru.vnevzorov.Shop.model;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class OrderedProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "orderedproduct_gen_seq")
@@ -20,6 +25,16 @@ public class OrderedProduct {
     private Product product;
 
     private int quantity;
+
+    /***************Spring Data JPA Auditing*******************/
+    @Column(name = "created_date", nullable = false, updatable = false)
+    @CreatedDate
+    private long createdDate;
+
+    @Column(name = "modified_date")
+    @LastModifiedDate
+    private long modifiedDate;
+    /***************Spring Data JPA Auditing*******************/
 
     public OrderedProduct() {
     }

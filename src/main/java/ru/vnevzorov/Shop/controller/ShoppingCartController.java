@@ -8,13 +8,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+import ru.vnevzorov.Shop.model.OrderedProduct;
 import ru.vnevzorov.Shop.model.Product;
 import ru.vnevzorov.Shop.model.ShoppingCart;
-/*import ru.vnevzorov.Shop.model.User;*/
 import ru.vnevzorov.Shop.model.user.User;
-import ru.vnevzorov.Shop.service.*;
+import ru.vnevzorov.Shop.service.CategoryService;
+import ru.vnevzorov.Shop.service.OrderedProductService;
+import ru.vnevzorov.Shop.service.ProductService;
+import ru.vnevzorov.Shop.service.ShoppingCartService;
+import ru.vnevzorov.Shop.service.user.UserService;
 
-import javax.servlet.http.HttpServletRequest;
+/*import ru.vnevzorov.Shop.model.User;*/
 
 @Controller
 @ControllerAdvice  // в этом контроллере есть метод который должен распростарняться на все другие контроллеры (ModelAttribut)
@@ -37,7 +41,7 @@ public class ShoppingCartController {
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping("addToCart")
+    /*@GetMapping("addToCart")
     public RedirectView addToShoppingCart(@RequestParam("id") String productId, @RequestParam("category") String categoryName) {
         log.info("GET: /addToCart?id=" + productId + "&category=" + categoryName);
 
@@ -47,6 +51,18 @@ public class ShoppingCartController {
         shoppingCartService.addProduct(productId);
 
         return redirectView;
+    }*/
+
+    @PostMapping("addToCart")
+    public RedirectView addToShoppingCart(@ModelAttribute Product chosenProductId) {
+        log.info("POST: /addToCart id=" + chosenProductId.getId());
+
+        Product chosenProduct = productService.getProductById(chosenProductId.getId());
+        String url = "products" + "?category=" + chosenProduct.getCategory().getName();
+
+        shoppingCartService.addProduct(chosenProduct);
+
+        return new RedirectView(url);
     }
 
     @GetMapping("shoppingcart")
@@ -62,13 +78,14 @@ public class ShoppingCartController {
         modelAndView.addObject("totalDiscount", shoppingCart.getTotalDiscount());
         modelAndView.addObject("orderedProducts", shoppingCart.getOrderedProducts());
         modelAndView.addObject("shoppingCartId", shoppingCart.getId());
+        modelAndView.addObject("newQuantityObject", new OrderedProduct());
 
         log.info("returned: " + modelAndView.getViewName() + ", model: " + modelAndView.getModel());
 
         return modelAndView;
     }
 
-    @PostMapping("changeQuantity")
+    /*@PostMapping("changeQuantity")
     public RedirectView changeQuantity(HttpServletRequest request) {
         String url = "shoppingcart";
         String orderedProductId = request.getParameter("orderedProductId");
@@ -84,6 +101,27 @@ public class ShoppingCartController {
             return new RedirectView("shoppingcart"); //TODO показать сообщение, что введены неверные данные
         }
         shoppingCartService.changeProductQuantity(orderedProductId, newQuantity);
+
+        User user = userService.getUserByLogin("firstUser"); //FIXME
+
+        return new RedirectView(url);
+    }*/
+
+    @PostMapping("changeQuantity")
+    public RedirectView changeQuantity(@ModelAttribute OrderedProduct newQuantityObject) {
+        String url = "shoppingcart";
+
+        Integer newQuantity;
+        try {
+            newQuantity = newQuantityObject.getQuantity();
+            if (newQuantity < 0) {
+                throw  new IllegalArgumentException();
+            }
+        } catch (Exception e) {
+            log.error("Exception: wrong format newQuantity = " + newQuantityObject.getQuantity());
+            return new RedirectView("shoppingcart"); //TODO показать сообщение, что введены неверные данные
+        }
+        shoppingCartService.changeProductQuantity(newQuantityObject);
 
         User user = userService.getUserByLogin("firstUser"); //FIXME
 

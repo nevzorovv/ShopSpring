@@ -1,19 +1,29 @@
 package ru.vnevzorov.Shop.model;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_gen_seq")
     @SequenceGenerator(name = "product_gen_seq", initialValue = 1, allocationSize = 1, sequenceName = "product_seq")
     private Long id;
 
+    @NotBlank(message = "field must be filled")
     private String manufacturer;
+
+    @NotBlank(message = "field must be filled")
     private String model;
+
     private Double price;
 
     @ManyToOne
@@ -29,6 +39,16 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<OrderedProduct> orderedProducts = new ArrayList<>();
+
+    /***************Spring Data JPA Auditing*******************/
+    @Column(name = "created_date", nullable = false, updatable = false)
+    @CreatedDate
+    private long createdDate;
+
+    @Column(name = "modified_date")
+    @LastModifiedDate
+    private long modifiedDate;
+    /***************Spring Data JPA Auditing*******************/
 
     public Product() {
     }

@@ -12,17 +12,14 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.vnevzorov.Shop.enumeration.Status;
 import ru.vnevzorov.Shop.model.Order;
-import ru.vnevzorov.Shop.model.ShoppingCart;
-/*import ru.vnevzorov.Shop.model.User;*/
 import ru.vnevzorov.Shop.model.user.User;
-import ru.vnevzorov.Shop.service.EmailService;
 import ru.vnevzorov.Shop.service.OrderService;
 import ru.vnevzorov.Shop.service.ShoppingCartService;
-import ru.vnevzorov.Shop.service.UserService;
+import ru.vnevzorov.Shop.service.email.EmailService;
+import ru.vnevzorov.Shop.service.report.ReportService;
+import ru.vnevzorov.Shop.service.user.UserService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
-import java.util.Optional;
 
 @Controller
 public class OrderController {
@@ -39,6 +36,9 @@ public class OrderController {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    ReportService reportService;
 
     @GetMapping("orderinformation")
     public ModelAndView showOrderForm(@RequestParam("id") String cartId) {

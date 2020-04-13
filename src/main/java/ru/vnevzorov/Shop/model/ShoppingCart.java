@@ -1,13 +1,18 @@
 package ru.vnevzorov.Shop.model;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import ru.vnevzorov.Shop.model.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class ShoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cart_gen_seq")
@@ -21,13 +26,18 @@ public class ShoppingCart {
     @OneToOne(optional = false)
     private User user;
 
-    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.PERSIST) //orphanRemoval = true указывает, что все объекты orderedProduct, не имеющие ссылку на корзину, будут удалены
+    @OneToMany(mappedBy = "shoppingCart"/*, cascade = CascadeType.PERSIST*/) //orphanRemoval = true указывает, что все объекты orderedProduct, не имеющие ссылку на корзину, будут удалены
     private List<OrderedProduct> orderedProducts = new ArrayList<>();
 
-    /*@ManyToMany
-    @JoinTable(name = "shoppingcart_product", joinColumns = @JoinColumn(name = "shoppingcart_id"),
-    inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private List<Product> products = new ArrayList<>();*/
+    /***************Spring Data JPA Auditing*******************/
+    @Column(name = "created_date", nullable = false, updatable = false)
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @Column(name = "modified_date")
+    @LastModifiedDate
+    private LocalDateTime modifiedDate;
+    /***************Spring Data JPA Auditing*******************/
 
     public ShoppingCart() {
     }

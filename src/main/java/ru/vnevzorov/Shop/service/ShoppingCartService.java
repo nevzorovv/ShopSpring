@@ -11,6 +11,7 @@ import ru.vnevzorov.Shop.model.Product;
 import ru.vnevzorov.Shop.model.ShoppingCart;
 import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.repository.ShoppingCartRepository;
+import ru.vnevzorov.Shop.service.user.UserService;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,7 @@ public class ShoppingCartService {
     @Autowired
     OrderedProductService orderedProductService;
 
+
     public ShoppingCart getById(String cartId) {
         Optional<ShoppingCart> shoppingCartOptional = shoppingCartRepository.findById(Long.parseLong(cartId));
         ShoppingCart cart;
@@ -43,7 +45,7 @@ public class ShoppingCartService {
         return cart;
     }
 
-    @Transactional
+    /*@Transactional
     public void addProduct(String productId) {
         Product product = productService.getProductById(productId);
         User user = userService.getUserByLogin("firstUser"); //FIXME
@@ -57,14 +59,45 @@ public class ShoppingCartService {
         updateTotalPriceAndDiscount(shoppingCart);
 
         log.info("product: " + product + " added to cart id = " + shoppingCart.getId());
+    }*/
+
+    @Transactional
+    public void addProduct(Product chosenProduct) {
+        User user = userService.getUserByLogin("firstUser"); //FIXME
+
+        if (user.getShoppingCart() == null) {
+            log.info("user doesnt have active cart, creating a new shopping cart");
+            createShoppingCart(user);
+        }
+        ShoppingCart shoppingCart = getByUser(user);
+        List<OrderedProduct> orderedProducts = shoppingCart.getOrderedProducts();
+
+        boolean alreadyAdded = false;
+        for (OrderedProduct orderedProduct : orderedProducts) {
+            Product productInCart = orderedProduct.getProduct();
+            if (chosenProduct.equals(productInCart)) {
+                log.info("product id=" + chosenProduct.getId() + " is already ordered. Increasing quantity by 1");
+                alreadyAdded = true;
+                orderedProduct.setQuantity(orderedProduct.getQuantity() + 1);
+                break;
+            }
+        }
+        if (!alreadyAdded) {
+            log.info("product id=" + chosenProduct.getId() + "have not been added to cart yet. Adding product");
+            OrderedProduct newOrderedProduct = new OrderedProduct(shoppingCart, chosenProduct, 1);
+            orderedProductService.save(newOrderedProduct);
+            orderedProducts.add(newOrderedProduct);
+        }
+        updateTotalPriceAndDiscount(shoppingCart);
+
+        shoppingCartRepository.save(shoppingCart);
+        log.info("product: " + chosenProduct + " added to cart id = " + shoppingCart.getId());
     }
 
     private void createShoppingCart(User user) {
         log.info("start creating new cart for user login=" + user.getLogin());
         ShoppingCart shoppingCart = shoppingCartRepository.save(new ShoppingCart(user));
         userService.setShoppingCartForUser(shoppingCart, user);
-        //??????????????
-        //userService.setShoppingCartForUser(shoppingCart, user);
     }
 
     public ShoppingCart getByUser(User user) {
@@ -92,10 +125,10 @@ public class ShoppingCartService {
         cart.setTotalPrice(totalPrice);
         cart.setTotalDiscount(totalDiscount);
 
-        log.info("update finished");
+        log.info("total price update finished");
     }
 
-    @Transactional
+    /*@Transactional
     public void changeProductQuantity(String orderedProductId, int newQuantity) {
         User user = userService.getUserByLogin("firstUser"); //FIXME
 
@@ -103,6 +136,17 @@ public class ShoppingCartService {
         OrderedProduct orderedProduct = orderedProductService.getByCartAndId(cart, orderedProductId);
 
         orderedProduct.setQuantity(newQuantity);
+        updateTotalPriceAndDiscount(cart);
+    }*/
+
+    @Transactional
+    public void changeProductQuantity(OrderedProduct newQuantityObject) {
+        User user = userService.getUserByLogin("firstUser"); //FIXME
+
+        ShoppingCart cart = shoppingCartRepository.findByUser(user);
+        OrderedProduct orderedProduct = orderedProductService.getByCartAndId(cart, newQuantityObject.getId());
+
+        orderedProduct.setQuantity(newQuantityObject.getQuantity());
         updateTotalPriceAndDiscount(cart);
     }
 

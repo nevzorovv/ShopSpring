@@ -8,6 +8,6 @@ import ru.vnevzorov.Shop.model.user.Admin;
 @Transactional
 public interface AdminRepository extends AbstractUserRepository<Admin> {
 
-
+    Iterable<Admin> findAllBySendReportsIsTrue();
 
 }

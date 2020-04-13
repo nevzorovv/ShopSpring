@@ -11,7 +11,11 @@ import ru.vnevzorov.Shop.model.OrderedProduct;
 import ru.vnevzorov.Shop.model.ShoppingCart;
 import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.repository.OrderRepository;
+import ru.vnevzorov.Shop.service.email.EmailService;
+import ru.vnevzorov.Shop.service.email.Message;
+import ru.vnevzorov.Shop.service.user.UserService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -65,11 +69,15 @@ public class OrderService {
         orderRepository.save(order);
         shoppingCartService.deleteCart();
     }
-
+    @Transactional
+    //TODO проверить как работает, сохраняются ли эти продукты
     public void setOrderedProducts(Order order) {
-        User user = order.getUser();
+        User user = userService.getUserByLogin("firstUser");
         List<OrderedProduct> orderedProducts = user.getShoppingCart().getOrderedProducts();
         orderedProducts.forEach(product -> product.setOrder(order));
+        /*for (OrderedProduct orderedProduct : orderedProducts) {
+            orderedProduct.setOrder(order);
+        }*/
 
         order.setOrderedProducts(orderedProducts);
     }
@@ -88,8 +96,17 @@ public class OrderService {
         order.setStatus(newStatus);
         log.info("order status changed: orderId=" + order.getId() + " newStatus=" + newStatus);
 
-        emailService.sendMessage(order.getUser().getEmail(),
-                "Order " + order.getId(),
-                "Status of your order " + order.getId() + " was changed to " + order.getStatus() + "\r\nThank you for choosing our service");
+        String to = order.getUser().getEmail();
+        String subject = "Order " + order.getId();
+        String text = "Status of your order " + order.getId() + " was changed to "
+                + order.getStatus() + "\r\nThank you for choosing our service";
+        Message message = new Message(to, subject, text);
+        emailService.sendMessage(message);
     }
+
+    public Iterable<Order> getAllByDateGreaterThanEqual(LocalDate date) {
+        LocalDateTime dateTime = date.atStartOfDay();
+        return orderRepository.findAllByDateGreaterThanEqual(dateTime);
+    }
+
 }
