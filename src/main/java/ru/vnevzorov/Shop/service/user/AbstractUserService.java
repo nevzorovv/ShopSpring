@@ -1,10 +1,13 @@
 package ru.vnevzorov.Shop.service.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import ru.vnevzorov.Shop.model.user.AbstractUser;
 import ru.vnevzorov.Shop.repository.AbstractUserRepository;
+
+import java.util.Optional;
 
 @Service
 public class AbstractUserService {
@@ -16,9 +19,17 @@ public class AbstractUserService {
         abstractUserRepository.save(user);
     }
 
-    @Cacheable("all_users")
+    @CachePut("all_users")
     public Iterable<AbstractUser> getAll() {
         return abstractUserRepository.findAll();
+    }
+
+    public AbstractUser getByLogin(String login) {
+        return abstractUserRepository.findByLogin(login);
+    }
+
+    public AbstractUser getByEmail(String email) {
+        return abstractUserRepository.findByEmail(email);
     }
 
 }

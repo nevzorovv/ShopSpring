@@ -5,7 +5,10 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,14 +21,16 @@ public class Product {
     @SequenceGenerator(name = "product_gen_seq", initialValue = 1, allocationSize = 1, sequenceName = "product_seq")
     private Long id;
 
-    @NotBlank(message = "field must be filled")
+    @NotBlank(message = "field must be not empty")
     private String manufacturer;
 
-    @NotBlank(message = "field must be filled")
+    @NotBlank(message = "field must be not empty")
     private String model;
 
+    @NotNull
+    @Digits(integer = 7, fraction = 2, message = "value out of <7 digits>.<2 digits>")
     private Double price;
-
+    
     @ManyToOne
     private Category category;
 
@@ -43,11 +48,11 @@ public class Product {
     /***************Spring Data JPA Auditing*******************/
     @Column(name = "created_date", nullable = false, updatable = false)
     @CreatedDate
-    private long createdDate;
+    private LocalDateTime createdDate;
 
     @Column(name = "modified_date")
     @LastModifiedDate
-    private long modifiedDate;
+    private LocalDateTime modifiedDate;
     /***************Spring Data JPA Auditing*******************/
 
     public Product() {

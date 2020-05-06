@@ -4,36 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <title>Shop</title>
-    <link type="text/css" rel="stylesheet" href="styles.css" media="all">
+   <%-- <link type="text/css" rel="stylesheet" href="styles.css" media="all">--%>
 </head>
 <body>
+<%@ include file="navbar.jsp" %>
 
-<header>Order management</header>
+<h3>Order management</h3>
 
 <section>
-    <table style="padding: 20px">
-        <tr>
-            <th>ID</th>
-            <th>Customer</th>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Total price</th>
-            <th>Current status</th>
-            <th>Status change</th>
-        </tr>
+    <table style="padding: 20px"><table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Date</th>
+                <th scope="col">Description</th>
+                <th scope="col">Total price</th>
+                <th scope="col">Current status</th>
+                <th scope="col">Status change</th>
+            </tr>
+        </thead>
         <c:forEach items="${orders}" var="order">
             <tr>
                 <th>${order.id}</th>
-                <th>${order.user.login}</th>
-                <th>${order.date}</th>
-                <th>
+                <td>${order.user.login}</td>
+                <td>${order.date}</td>
+                <td>
                     <c:forEach items="${order.orderedProducts}" var="product">
                         Id: ${product.product.id}, ${product.product.manufacturer} ${product.product.model}, quantity: ${product.quantity}
                     </c:forEach>
-                </th>
-                <th>${order.totalPrice}</th>
-                <th>${order.status}</th>
-                <th>
+                </td>
+                <td>${order.totalPrice}</td>
+                <td>${order.status}</td>
+                <td>
                     <c:if test="${order.status != 'DELIVERED'}">
                         <form:form method="post" action="/status_change" modelAttribute="newStatus">
                             <form:select path="status">
@@ -49,7 +52,7 @@
                                 </c:if>
                             </form:select>
                             <form:hidden path="id" value="${order.id}"/>
-                            <input type="submit" value="Change">
+                            <button type="submit" class="btn btn-primary">Change</button>
                         </form:form>
 
                         <%--<form method="get" action="status_change">
@@ -69,7 +72,7 @@
                             <input type="submit" value="Change">
                         </form>--%>
                     </c:if>
-                </th>
+                </td>
             </tr>
         </c:forEach>
     </table>
@@ -78,3 +81,7 @@
 
 </body>
 </html>
+
+
+
+

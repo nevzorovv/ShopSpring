@@ -18,7 +18,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("USER"));
+        return List.of(new SimpleGrantedAuthority(abstractUser.getRole().name()));
     }
 
     @Override
@@ -49,5 +49,9 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public AbstractUser getAbstractUser() {
+        return abstractUser;
     }
 }

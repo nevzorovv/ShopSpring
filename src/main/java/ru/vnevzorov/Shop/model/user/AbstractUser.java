@@ -5,6 +5,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -15,6 +17,9 @@ public abstract class AbstractUser {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "abuser_gen_seq")
     @SequenceGenerator(name = "abuser_gen_seq", initialValue = 1, allocationSize = 1, sequenceName = "abuser_seq")
     private Long id;
+
+    @Column(nullable = false)
+    private Role role = Role.USER;
 
     @Column(unique = true, nullable = false)
     private String login;
@@ -28,27 +33,31 @@ public abstract class AbstractUser {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
+    private LocalDate birthday;
+
+    @Column(unique = false/*true*/, nullable = false) // временно уникальность отключена
     private String email;
 
     /***************Spring Data JPA Auditing*******************/
     @Column(name = "created_date", nullable = false, updatable = false)
     @CreatedDate
-    private long createdDate;
+    private LocalDateTime createdDate;
 
     @Column(name = "modified_date")
     @LastModifiedDate
-    private long modifiedDate;
+    private LocalDateTime modifiedDate;
     /***************Spring Data JPA Auditing*******************/
 
     public AbstractUser() {
     }
 
-    public AbstractUser(String login, String password, String firstName, String lastName, String email) {
+    public AbstractUser(String login, String password, String firstName, String lastName, LocalDate birthday, String email) {
         this.login = login;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.birthday = birthday;
         this.email = email;
     }
 
@@ -61,6 +70,7 @@ public abstract class AbstractUser {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
                 '}';
     }
 
@@ -70,16 +80,18 @@ public abstract class AbstractUser {
         if (o == null || getClass() != o.getClass()) return false;
         AbstractUser that = (AbstractUser) o;
         return Objects.equals(id, that.id) &&
+                Objects.equals(role, that.role) &&
                 Objects.equals(login, that.login) &&
                 Objects.equals(password, that.password) &&
                 Objects.equals(firstName, that.firstName) &&
                 Objects.equals(lastName, that.lastName) &&
+                Objects.equals(birthday, that.birthday) &&
                 Objects.equals(email, that.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, login, password, firstName, lastName, email);
+        return Objects.hash(id, login, password, firstName, lastName, email, role, birthday);
     }
 
     public Long getId() {
@@ -122,11 +134,43 @@ public abstract class AbstractUser {
         this.lastName = lastName;
     }
 
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public LocalDateTime getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(LocalDateTime modifiedDate) {
+        this.modifiedDate = modifiedDate;
     }
 }

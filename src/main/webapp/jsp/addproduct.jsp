@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Shop</title>
-    <link type="text/css" rel="stylesheet" href="styles.css" media="all">
+    <link type="text/css" rel="stylesheet" href="addproduct_styles.css" media="all">
 </head>
 <body>
-<header>Add a new product</header>
+<%@ include file="navbar.jsp" %>
 
 <section>
-    <form:form method="post" action="saveProduct" modelAttribute="product">
-        <table>
+    <h3 style="font-weight: normal">Add a new product</h3>
+    <form:form method="post" action="addproduct" modelAttribute="product">
+        <table style="padding: 20px; font-weight: normal">
             <tr>
                 <th>Select category:</th>
                 <th>
@@ -19,22 +20,22 @@
                         <form:options items="${categories}" itemValue="id" itemLabel="name"/>
                     </form:select>
                 </th>
-                <th><form:errors path="category"/></th>
+                <th></th>
             </tr>
             <tr>
                 <th>Manufacturer:</th>
                 <th><form:input path="manufacturer"/></th>
-                <th><form:errors path="manufacturer"/></th>
+                <th><form:errors path="manufacturer" cssClass="text-danger"/></th>
             </tr>
             <tr>
                 <th>Model:</th>
                 <th><form:input path="model"/></th>
-                <th><form:errors path="model"/></th>
+                <th><form:errors path="model" cssClass="text-danger"/></th>
             </tr>
             <tr>
                 <th>Price:</th>
                 <th><form:input path="price"/></th>
-                <th><form:errors path="price"/></th>
+                <th><form:errors path="price" cssClass="text-danger"/></th>
             </tr>
             <tr>
                 <th>Discount:</th>

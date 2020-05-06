@@ -1,6 +1,8 @@
 package ru.vnevzorov.Shop.model.user;
 
 import javax.persistence.Entity;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -14,8 +16,8 @@ public class Admin extends AbstractUser {
     public Admin() {
     }
 
-    public Admin(String login, String password, String firstName, String lastName, String email, String testField1, String testField2, boolean sendReports) {
-        super(login, password, firstName, lastName, email);
+    public Admin(String login, String password, String firstName, String lastName, LocalDate birthday, String email, String testField1, String testField2, boolean sendReports) {
+        super(login, password, firstName, lastName, birthday, email);
         this.testField1 = testField1;
         this.testField2 = testField2;
         this.sendReports = sendReports;

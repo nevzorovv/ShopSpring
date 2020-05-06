@@ -11,6 +11,10 @@ import java.util.Optional;
 @Repository
 public interface AbstractUserRepository<T extends AbstractUser> extends CrudRepository<T, Long> {
 
-    AbstractUser findByLogin(String login);
+    //AbstractUser findByLogin(String login);
+
+    T findByLogin(String login);
+
+    AbstractUser findByEmail(String email);
 
 }

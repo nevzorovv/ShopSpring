@@ -11,6 +11,7 @@ import ru.vnevzorov.Shop.model.OrderedProduct;
 import ru.vnevzorov.Shop.model.ShoppingCart;
 import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.repository.OrderRepository;
+import ru.vnevzorov.Shop.security.UserDetailsServiceImpl;
 import ru.vnevzorov.Shop.service.email.EmailService;
 import ru.vnevzorov.Shop.service.email.Message;
 import ru.vnevzorov.Shop.service.user.UserService;
@@ -44,8 +45,12 @@ public class OrderService {
     @Autowired
     EmailService emailService;
 
+    @Autowired
+    UserDetailsServiceImpl userDetailsService;
+
+    @Deprecated
     public Order prepareNewOrder(String shoppingCartId) {
-        User user = userService.getUserByLogin("firstUser"); //FIXME
+        User user = userDetailsService.getUser();
 
         ShoppingCart cart = shoppingCartService.getById(shoppingCartId);
         Order order = new Order();
@@ -57,28 +62,21 @@ public class OrderService {
     }
 
     @Transactional
-    public void saveOrder(Order order) {
-        User user = order.getUser();
+    public void saveNewOrder(Order order) {
+        User user = userDetailsService.getUser();
+        order.setUser(user);
         order.setTotalPrice(user.getShoppingCart().getTotalPrice());
         order.setPayment(paymentService.getPayment(order.getPayment().getType()));
         order.setShipment(shipmentService.getShipment(order.getShipment().getType()));
         order.setDate(LocalDateTime.now());
         order.setStatus(Status.CREATED);
-        setOrderedProducts(order);
+
+        //Удаление корзины, передача списка заказанных продуктов из корзины в заказ
+        List<OrderedProduct> orderedProducts = user.getShoppingCart().getOrderedProducts();
+        shoppingCartService.deleteCart();
 
         orderRepository.save(order);
-        shoppingCartService.deleteCart();
-    }
-    @Transactional
-    //TODO проверить как работает, сохраняются ли эти продукты
-    public void setOrderedProducts(Order order) {
-        User user = userService.getUserByLogin("firstUser");
-        List<OrderedProduct> orderedProducts = user.getShoppingCart().getOrderedProducts();
-        orderedProducts.forEach(product -> product.setOrder(order));
-        /*for (OrderedProduct orderedProduct : orderedProducts) {
-            orderedProduct.setOrder(order);
-        }*/
-
+        orderedProducts.forEach(orderedProduct -> orderedProduct.setOrder(order));
         order.setOrderedProducts(orderedProducts);
     }
 
@@ -104,6 +102,9 @@ public class OrderService {
         emailService.sendMessage(message);
     }
 
+    /*
+    * Метод возвращает список всех заказов, начиная с определенной даты. Используется для отчетности
+    */
     public Iterable<Order> getAllByDateGreaterThanEqual(LocalDate date) {
         LocalDateTime dateTime = date.atStartOfDay();
         return orderRepository.findAllByDateGreaterThanEqual(dateTime);

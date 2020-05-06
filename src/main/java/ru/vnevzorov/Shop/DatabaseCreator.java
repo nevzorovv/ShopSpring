@@ -10,12 +10,14 @@ import ru.vnevzorov.Shop.enumeration.Status;
 import ru.vnevzorov.Shop.model.*;
 import ru.vnevzorov.Shop.model.user.AbstractUser;
 import ru.vnevzorov.Shop.model.user.Admin;
+import ru.vnevzorov.Shop.model.user.Role;
 import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.repository.*;
 import ru.vnevzorov.Shop.service.user.AbstractUserService;
 import ru.vnevzorov.Shop.service.user.UserService;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component
@@ -114,21 +116,17 @@ public class DatabaseCreator {
         productRepository.save(matebookXProProduct);
         productRepository.save(evgeniOneginProduct);
 
-        //productRepository.findAll().forEach(log::info);
-
-        /*User user1 = new User("firstUser", "123", "name1", "pupkin.1994@yandex.ru");
-        User user2 = new User("secondUser", "123", "name2", "mail2@mail.ru");
-        User user3 = new User("thirdUser", "123", "name3", "mail3@mail.ru");
-        userRepository.save(user1);
-        userRepository.save(user2);
-        userRepository.save(user3);*/
-
-        User user1 = new User("firstUser", passwordEncoder.encode("123"), "name1", "lastName1", "/*pupkin.1994@yandex.ru*/", "testUserField1", "testUserField2");
-        User user2 = new User("secondUser", "123", "name1", "lastName1", "testEmail", "testUserField1", "testUserField2");
-        Admin admin1 = new Admin("firstAdmin", "123", "name1", "lastName1", /*"testEmailAdmin"*/ "pupkin.1994@yandex.ru", "testAdminField1", "testAdminField2", true);
+        User user1 = new User("Vladimir", passwordEncoder.encode("123"), "Vladimir", "Nevzorov", LocalDate.of(2000, 1, 1), "pupkin.1994@yandex.ru", "testUserField1", "testUserField2");
+        User user2 = new User("secondUser", passwordEncoder.encode("123"), "name1", "lastName1", LocalDate.of(2000, 1, 1), "testEmail", "testUserField1", "testUserField2");
+        Admin admin1 = new Admin("Vladimir_admin", passwordEncoder.encode("123"), "Vladimir", "Nevzorov", LocalDate.of(2000, 1, 1), "pupkin.1994@yandex.ru", "testAdminField1", "testAdminField2", true);
+        admin1.setRole(Role.ADMIN);
         userRepository.save(user1);
         userRepository.save(user2);
         abstractUserService.save(admin1);
+
+        //Test
+        AbstractUser abstractUser = abstractUserService.getByLogin("firstUser");
+        AbstractUser abstractUserAnon = abstractUserService.getByLogin("AnonymousUser");
 
         //TODO проверить функцию кэша
         User user1test = userService.getUserByLogin("firstUser");
@@ -144,6 +142,7 @@ public class DatabaseCreator {
         orderRepository.save(order1);
         orderRepository.save(order2);
         orderRepository.save(order3);
+
     }
 
 

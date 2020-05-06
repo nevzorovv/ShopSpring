@@ -10,6 +10,15 @@ header {
     padding-top:20px;
 }
 
+h3 {
+    width: 80%;
+    margin-left: auto;
+    margin-right:auto;
+    text-align:center;
+    padding-top:20px;
+    font-weight: normal;
+}
+
 section {
     width:80%;
     margin-left:auto;
@@ -28,12 +37,12 @@ footer {
 nav ul {
     list-style-type:none;
 }
-/*nav li {
+nav li {
     margin-right:20px;
     float:right;
     list-style-type:none;
     padding-top:7px;
-}*/
+}
 
 table {
     margin-left:auto;

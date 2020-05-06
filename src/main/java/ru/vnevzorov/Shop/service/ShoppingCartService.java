@@ -2,15 +2,22 @@ package ru.vnevzorov.Shop.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.WrongClassException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vnevzorov.Shop.aspect.annotation.LogResult;
 import ru.vnevzorov.Shop.model.OrderedProduct;
 import ru.vnevzorov.Shop.model.Product;
 import ru.vnevzorov.Shop.model.ShoppingCart;
+import ru.vnevzorov.Shop.model.user.AbstractUser;
+import ru.vnevzorov.Shop.model.user.Role;
 import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.repository.ShoppingCartRepository;
+import ru.vnevzorov.Shop.security.UserDetailsImpl;
+import ru.vnevzorov.Shop.security.UserDetailsServiceImpl;
 import ru.vnevzorov.Shop.service.user.UserService;
 
 import java.util.List;
@@ -33,6 +40,9 @@ public class ShoppingCartService {
     @Autowired
     OrderedProductService orderedProductService;
 
+    @Autowired
+    UserDetailsServiceImpl userDetailsService;
+
 
     public ShoppingCart getById(String cartId) {
         Optional<ShoppingCart> shoppingCartOptional = shoppingCartRepository.findById(Long.parseLong(cartId));
@@ -45,25 +55,9 @@ public class ShoppingCartService {
         return cart;
     }
 
-    /*@Transactional
-    public void addProduct(String productId) {
-        Product product = productService.getProductById(productId);
-        User user = userService.getUserByLogin("firstUser"); //FIXME
-
-        if (user.getShoppingCart() == null) {
-            log.info("user doesnt have active cart");
-            createShoppingCart(user);
-        }
-        ShoppingCart shoppingCart = getByUser(user);
-        shoppingCart.getOrderedProducts().add(new OrderedProduct(shoppingCart, product, 1));
-        updateTotalPriceAndDiscount(shoppingCart);
-
-        log.info("product: " + product + " added to cart id = " + shoppingCart.getId());
-    }*/
-
     @Transactional
     public void addProduct(Product chosenProduct) {
-        User user = userService.getUserByLogin("firstUser"); //FIXME
+        User user = userDetailsService.getUser();
 
         if (user.getShoppingCart() == null) {
             log.info("user doesnt have active cart, creating a new shopping cart");
@@ -128,20 +122,9 @@ public class ShoppingCartService {
         log.info("total price update finished");
     }
 
-    /*@Transactional
-    public void changeProductQuantity(String orderedProductId, int newQuantity) {
-        User user = userService.getUserByLogin("firstUser"); //FIXME
-
-        ShoppingCart cart = shoppingCartRepository.findByUser(user);
-        OrderedProduct orderedProduct = orderedProductService.getByCartAndId(cart, orderedProductId);
-
-        orderedProduct.setQuantity(newQuantity);
-        updateTotalPriceAndDiscount(cart);
-    }*/
-
     @Transactional
     public void changeProductQuantity(OrderedProduct newQuantityObject) {
-        User user = userService.getUserByLogin("firstUser"); //FIXME
+        User user = userDetailsService.getUser();
 
         ShoppingCart cart = shoppingCartRepository.findByUser(user);
         OrderedProduct orderedProduct = orderedProductService.getByCartAndId(cart, newQuantityObject.getId());
@@ -152,13 +135,13 @@ public class ShoppingCartService {
 
     @Transactional
     public void deleteOrderedProduct(String orderedProductId) {
-        User user = userService.getUserByLogin("firstUser");
+        User user = userDetailsService.getUser();
+
         Long id = Long.parseLong(orderedProductId);
         List<OrderedProduct> orderedProducts = user.getShoppingCart().getOrderedProducts();
         orderedProducts.removeIf((OrderedProduct product) -> {
             if (product.getId() == id) {
                 orderedProductService.delete(product);
-                //product.setShoppingCart(null); убрал orphanRemoval
                 return true;
             } else {
                 return false;
@@ -169,7 +152,7 @@ public class ShoppingCartService {
 
     @Transactional
     public void deleteCart() {
-        User user = userService.getUserByLogin("firstUser");
+        User user = userDetailsService.getUser();
 
         List<OrderedProduct> orderedProducts = user.getShoppingCart().getOrderedProducts();
         orderedProducts.forEach(product -> product.setShoppingCart(null));
@@ -178,9 +161,9 @@ public class ShoppingCartService {
     }
 
     @LogResult
-    public Integer calculateItems() {
-        String login = "firstUser"; //FIXME
-        User user = userService.getUserByLogin(login);
+    public Integer calculateItems(AbstractUser abstractUser) {
+        User user = userService.getUserByLogin(abstractUser.getLogin());
+
         if (user.getShoppingCart() == null) {
             return 0;
         }
@@ -189,14 +172,4 @@ public class ShoppingCartService {
         return orderedProducts.size();
     }
 
-    /*@Deprecated
-    @Transactional
-    public void addProduct(ShoppingCart cart, Product product) {
-        log.info("adding product id=" + product.getId() + " to cart id=" + cart.getId());
-
-        cart.getProducts().add(product);
-        updateTotalPriceAndDiscount(cart);
-
-    }
-*/
 }

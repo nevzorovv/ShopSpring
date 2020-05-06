@@ -5,6 +5,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -29,11 +30,11 @@ public class OrderedProduct {
     /***************Spring Data JPA Auditing*******************/
     @Column(name = "created_date", nullable = false, updatable = false)
     @CreatedDate
-    private long createdDate;
+    private LocalDateTime createdDate;
 
     @Column(name = "modified_date")
     @LastModifiedDate
-    private long modifiedDate;
+    private LocalDateTime modifiedDate;
     /***************Spring Data JPA Auditing*******************/
 
     public OrderedProduct() {

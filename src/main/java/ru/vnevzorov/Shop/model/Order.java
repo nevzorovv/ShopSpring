@@ -7,6 +7,7 @@ import ru.vnevzorov.Shop.enumeration.Status;
 import ru.vnevzorov.Shop.model.user.User;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,8 @@ public class Order {
     @SequenceGenerator(name = "order_gen_seq", initialValue = 1, allocationSize = 1, sequenceName = "order_seq")
     private Long id;
     private String number;
+
+    @Column()
     private LocalDateTime date;
     private Double totalPrice;
 
@@ -42,11 +45,11 @@ public class Order {
     /***************Spring Data JPA Auditing*******************/
     @Column(name = "created_date", nullable = false, updatable = false)
     @CreatedDate
-    private long createdDate;
+    private Timestamp createdDate;
 
     @Column(name = "modified_date")
     @LastModifiedDate
-    private long modifiedDate;
+    private LocalDateTime modifiedDate;
     /***************Spring Data JPA Auditing*******************/
 
     public Order() {

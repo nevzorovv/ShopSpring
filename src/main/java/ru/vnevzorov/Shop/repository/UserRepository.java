@@ -17,4 +17,5 @@ public interface UserRepository extends AbstractUserRepository<User> {
     User findByShoppingCart(ShoppingCart cart);
 
     User findByShoppingCart(Optional<ShoppingCart> cart);
+
 }

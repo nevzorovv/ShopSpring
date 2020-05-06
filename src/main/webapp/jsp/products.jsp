@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Shop</title>
-    <link type="text/css" rel="stylesheet" href="styles.css" media="all">
+    <link type="text/css" rel="stylesheet" href="style/styles.css" media="all">
 </head>
 <body>
 
-<%@ include file="basket_footer.jsp" %>
+<%@ include file="navbar.jsp" %>
 
-<header>${category_name}</header>
+<h3>${category_name}</h3>
 
 <section>
     <form:form method="post" action="products" modelAttribute="category">
@@ -21,7 +21,38 @@
         </form:select>
     </form:form>
 
-    <table style="padding: 20px">
+    <%--<br><c:if test="${param.allow != null && !param.allow}"><label style="color:red">You are not allowed to buy products</label></c:if>--%>
+    <br><c:if test="${param.allow != null && !param.allow}"><div class="alert alert-info" role="alert">You are not allowed to buy products</div></c:if>
+
+    <table class="table">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">Picture</th>
+            <th scope="col">Product</th>
+            <th scope="col">Price</th>
+            <th scope="col">Discount</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+            <c:forEach items="${products}" var="product">
+                <tr>
+                    <th scope="row">Picture</th>
+                    <td><a href="/product?id=${product.id}">${product.manufacturer} ${product.model}</a></td>
+                    <td>${product.price}</td>
+                    <td>${product.discount.value} ${product.discount.type}</td>
+                    <td><form:form method="post" action="addToCart" modelAttribute="chosenProduct">
+                        <form:hidden path="id" value="${product.id}"/>
+                        <button type="submit" class="btn btn-primary">Buy</button>
+                    </form:form></td>
+                </tr>
+            </c:forEach>
+        </tbody>
+    </table>
+</section>
+
+
+    <%--<table style="padding: 20px">
     <tr>
         <th>Manufacturer</th>
         <th>Model</th>
@@ -36,7 +67,6 @@
                 <th>${product.price}</th>
                 <th>${product.discount.value} ${product.discount.type}</th>
                 <th>
-                    <%--<a href="addToCart?id=${product.id}&category=${product.category.name}"><button type="submit">Buy</button></a>--%>
                     <form:form method="post" action="addToCart" modelAttribute="chosenProduct">
                         <form:hidden path="id" value="${product.id}"/>
                         <button>Buy</button>
@@ -44,9 +74,9 @@
                 </th>
             </tr>
     </c:forEach>
-</table>
+</table>--%>
 
-<button name="addProduct" id="addProduct" onclick="document.location='addproduct'">Add product</button>
 </section>
 </body>
 </html>
+

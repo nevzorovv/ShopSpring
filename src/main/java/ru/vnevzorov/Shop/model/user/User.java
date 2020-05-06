@@ -6,7 +6,9 @@ import ru.vnevzorov.Shop.model.ShoppingCart;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,8 +30,8 @@ public class User extends AbstractUser {
     public User() {
     }
 
-    public User(String login, String password, String firstName, String lastName, String email, String testField1, String testField2) {
-        super(login, password, firstName, lastName, email);
+    public User(String login, String password, String firstName, String lastName, LocalDate birthday, String email, String testField1, String testField2) {
+        super(login, password, firstName, lastName, birthday, email);
         this.testField1 = testField1;
         this.testField2 = testField2;
     }
@@ -42,23 +44,6 @@ public class User extends AbstractUser {
                 ", shoppingCart=" + shoppingCart +
                 '}';
     }
-
-    /*@Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        User user = (User) o;
-        return Objects.equals(testField1, user.testField1) &&
-                Objects.equals(testField2, user.testField2) &&
-                Objects.equals(orders, user.orders) &&
-                Objects.equals(shoppingCart, user.shoppingCart);
-    }*/
-
-    /*@Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), testField1, testField2, orders, shoppingCart);
-    }*/
 
     public String getTestField1() {
         return testField1;

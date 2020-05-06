@@ -3,6 +3,7 @@ package ru.vnevzorov.Shop.service.user;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,11 @@ public class UserService {
     ShoppingCartService shoppingCartService;
 
     @Cacheable("users")
+    public User getUserByLoginCache(String login) {
+        return userRepository.findByLogin(login);
+    }
+
+    @CachePut("users")
     public User getUserByLogin(String login) {
         return userRepository.findByLogin(login);
     }

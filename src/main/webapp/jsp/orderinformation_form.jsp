@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Shop</title>
-    <link type="text/css" rel="stylesheet" href="styles.css" media="all">
+    <link type="text/css" rel="stylesheet" href="style/styles.css" media="all">
 </head>
 <body>
-<%@ include file="basket_footer.jsp" %>
+<%@ include file="navbar.jsp" %>
 
 <header>Order form</header>
 
 <section>
-    <form:form action="saveNewOrder?id=${cartId}" method="post" modelAttribute="order">
+    <form:form action="order_confirmed" method="post" modelAttribute="order">
         <p>Choose payment method:
         <form:radiobuttons path="payment.type" items="${paymentTypes}"/></p>
         <p>Choose shipment method:

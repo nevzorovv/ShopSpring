@@ -3,6 +3,7 @@ package ru.vnevzorov.Shop.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,17 +12,16 @@ import org.springframework.web.servlet.view.RedirectView;
 import ru.vnevzorov.Shop.model.OrderedProduct;
 import ru.vnevzorov.Shop.model.Product;
 import ru.vnevzorov.Shop.model.ShoppingCart;
+import ru.vnevzorov.Shop.model.user.Role;
 import ru.vnevzorov.Shop.model.user.User;
+import ru.vnevzorov.Shop.security.UserDetailsServiceImpl;
 import ru.vnevzorov.Shop.service.CategoryService;
 import ru.vnevzorov.Shop.service.OrderedProductService;
 import ru.vnevzorov.Shop.service.ProductService;
 import ru.vnevzorov.Shop.service.ShoppingCartService;
 import ru.vnevzorov.Shop.service.user.UserService;
 
-/*import ru.vnevzorov.Shop.model.User;*/
-
 @Controller
-@ControllerAdvice  // в этом контроллере есть метод который должен распростарняться на все другие контроллеры (ModelAttribut)
 public class ShoppingCartController {
 
     private static final Logger log = LogManager.getLogger();
@@ -41,17 +41,8 @@ public class ShoppingCartController {
     @Autowired
     private CategoryService categoryService;
 
-    /*@GetMapping("addToCart")
-    public RedirectView addToShoppingCart(@RequestParam("id") String productId, @RequestParam("category") String categoryName) {
-        log.info("GET: /addToCart?id=" + productId + "&category=" + categoryName);
-
-        String url = "products" + "?category=" + categoryName;
-        RedirectView redirectView = new RedirectView(url);
-
-        shoppingCartService.addProduct(productId);
-
-        return redirectView;
-    }*/
+    @Autowired
+    UserDetailsServiceImpl userDetailsService;
 
     @PostMapping("addToCart")
     public RedirectView addToShoppingCart(@ModelAttribute Product chosenProductId) {
@@ -60,52 +51,38 @@ public class ShoppingCartController {
         Product chosenProduct = productService.getProductById(chosenProductId.getId());
         String url = "products" + "?category=" + chosenProduct.getCategory().getName();
 
+        if (userDetailsService.getAbstractUser().getRole() != Role.USER) {
+            log.error("The user has role=" + userDetailsService.getAbstractUser().getRole() + ". No permissions to create a shopping cart");
+            return new RedirectView(url + "&allow=false");
+        }
+
         shoppingCartService.addProduct(chosenProduct);
 
         return new RedirectView(url);
     }
 
     @GetMapping("shoppingcart")
+    //@PreAuthorize("hasAnyAuthority('ADMIN')" /*and @accessService.test(#user)*/)  // для методов сервисов не заработало
     public ModelAndView showShoppingCart() {
         log.info("GET: /shoppingcart");
 
         String viewName = "jsp/shoppingcart.jsp";
         ModelAndView modelAndView = new ModelAndView(viewName);
 
-        User user = userService.getUserByLogin("firstUser");
-        ShoppingCart shoppingCart = shoppingCartService.getByUser(user);
-        modelAndView.addObject("totalPrice", shoppingCart.getTotalPrice());
-        modelAndView.addObject("totalDiscount", shoppingCart.getTotalDiscount());
-        modelAndView.addObject("orderedProducts", shoppingCart.getOrderedProducts());
-        modelAndView.addObject("shoppingCartId", shoppingCart.getId());
-        modelAndView.addObject("newQuantityObject", new OrderedProduct());
+        User user = userDetailsService.getUser();
+        if (user.getShoppingCart() != null) {
+            ShoppingCart shoppingCart = shoppingCartService.getByUser(user);
+            modelAndView.addObject("totalPrice", shoppingCart.getTotalPrice());
+            modelAndView.addObject("totalDiscount", shoppingCart.getTotalDiscount());
+            modelAndView.addObject("orderedProducts", shoppingCart.getOrderedProducts());
+            modelAndView.addObject("shoppingCartId", shoppingCart.getId());
+            modelAndView.addObject("newQuantityObject", new OrderedProduct());
+        }
 
         log.info("returned: " + modelAndView.getViewName() + ", model: " + modelAndView.getModel());
 
         return modelAndView;
     }
-
-    /*@PostMapping("changeQuantity")
-    public RedirectView changeQuantity(HttpServletRequest request) {
-        String url = "shoppingcart";
-        String orderedProductId = request.getParameter("orderedProductId");
-        String newQuantityStr = request.getParameter("quantity");
-        int newQuantity;
-        try {
-            newQuantity = Integer.parseInt(newQuantityStr);
-            if (newQuantity < 0) {
-                throw  new IllegalArgumentException();
-            }
-        } catch (Exception e) {
-            log.error("Exception: wrong format newQuantity = " + newQuantityStr);
-            return new RedirectView("shoppingcart"); //TODO показать сообщение, что введены неверные данные
-        }
-        shoppingCartService.changeProductQuantity(orderedProductId, newQuantity);
-
-        User user = userService.getUserByLogin("firstUser"); //FIXME
-
-        return new RedirectView(url);
-    }*/
 
     @PostMapping("changeQuantity")
     public RedirectView changeQuantity(@ModelAttribute OrderedProduct newQuantityObject) {
@@ -123,8 +100,6 @@ public class ShoppingCartController {
         }
         shoppingCartService.changeProductQuantity(newQuantityObject);
 
-        User user = userService.getUserByLogin("firstUser"); //FIXME
-
         return new RedirectView(url);
     }
 
@@ -137,15 +112,6 @@ public class ShoppingCartController {
         return new RedirectView(url);
     }
 
-    @ModelAttribute // если эту аннотацию поставить над методом, метод будет выполняться для каждого запроса
-    public void calculateItems(Model model) {
-        Integer countItems = shoppingCartService.calculateItems();
-        model.addAttribute("countItems", countItems);
-    }
 
-    //@ModelAttribute
-    public User getUser() { // так тоже можно. В модель будет добавлять результат этого метода по имени класса(ключ)
-        return userService.getUserByLogin("firstUser");
-    }
 
 }
