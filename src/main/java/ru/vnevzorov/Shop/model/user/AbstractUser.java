@@ -39,6 +39,11 @@ public abstract class AbstractUser {
     @Column(unique = false/*true*/, nullable = false) // временно уникальность отключена
     private String email;
 
+    @Column(nullable = false)
+    private boolean emailConfirmed;
+
+    private boolean enabled;
+
     /***************Spring Data JPA Auditing*******************/
     @Column(name = "created_date", nullable = false, updatable = false)
     @CreatedDate
@@ -50,6 +55,7 @@ public abstract class AbstractUser {
     /***************Spring Data JPA Auditing*******************/
 
     public AbstractUser() {
+        this.enabled = false;
     }
 
     public AbstractUser(String login, String password, String firstName, String lastName, LocalDate birthday, String email) {
@@ -59,6 +65,8 @@ public abstract class AbstractUser {
         this.lastName = lastName;
         this.birthday = birthday;
         this.email = email;
+        this.emailConfirmed = false;
+        this.enabled = false;
     }
 
     @Override
@@ -71,6 +79,8 @@ public abstract class AbstractUser {
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", role='" + role + '\'' +
+                ", emailConfirmed='" + emailConfirmed + '\'' +
+                ", enabled='" + enabled + '\'' +
                 '}';
     }
 
@@ -86,12 +96,14 @@ public abstract class AbstractUser {
                 Objects.equals(firstName, that.firstName) &&
                 Objects.equals(lastName, that.lastName) &&
                 Objects.equals(birthday, that.birthday) &&
+                Objects.equals(emailConfirmed, that.emailConfirmed) &&
+                Objects.equals(enabled, that.enabled) &&
                 Objects.equals(email, that.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, login, password, firstName, lastName, email, role, birthday);
+        return Objects.hash(id, login, password, firstName, lastName, email, role, birthday, emailConfirmed, enabled);
     }
 
     public Long getId() {
@@ -172,5 +184,21 @@ public abstract class AbstractUser {
 
     public void setModifiedDate(LocalDateTime modifiedDate) {
         this.modifiedDate = modifiedDate;
+    }
+
+    public boolean isEmailConfirmed() {
+        return emailConfirmed;
+    }
+
+    public void setEmailConfirmed(boolean emailConfirmed) {
+        this.emailConfirmed = emailConfirmed;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

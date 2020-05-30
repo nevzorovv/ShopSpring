@@ -117,8 +117,11 @@ public class DatabaseCreator {
         productRepository.save(evgeniOneginProduct);
 
         User user1 = new User("Vladimir", passwordEncoder.encode("123"), "Vladimir", "Nevzorov", LocalDate.of(2000, 1, 1), "pupkin.1994@yandex.ru", "testUserField1", "testUserField2");
+        user1.setEmailConfirmed(true);
         User user2 = new User("secondUser", passwordEncoder.encode("123"), "name1", "lastName1", LocalDate.of(2000, 1, 1), "testEmail", "testUserField1", "testUserField2");
+        user2.setEmailConfirmed(true);
         Admin admin1 = new Admin("Vladimir_admin", passwordEncoder.encode("123"), "Vladimir", "Nevzorov", LocalDate.of(2000, 1, 1), "pupkin.1994@yandex.ru", "testAdminField1", "testAdminField2", true);
+        admin1.setEmailConfirmed(true);
         admin1.setRole(Role.ADMIN);
         userRepository.save(user1);
         userRepository.save(user2);

@@ -14,6 +14,7 @@ public class Admin extends AbstractUser {
     private boolean sendReports;
 
     public Admin() {
+        super();
     }
 
     public Admin(String login, String password, String firstName, String lastName, LocalDate birthday, String email, String testField1, String testField2, boolean sendReports) {

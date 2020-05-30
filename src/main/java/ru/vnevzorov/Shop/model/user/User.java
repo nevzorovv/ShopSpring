@@ -28,6 +28,7 @@ public class User extends AbstractUser {
     private ShoppingCart shoppingCart;
 
     public User() {
+        super();
     }
 
     public User(String login, String password, String firstName, String lastName, LocalDate birthday, String email, String testField1, String testField2) {

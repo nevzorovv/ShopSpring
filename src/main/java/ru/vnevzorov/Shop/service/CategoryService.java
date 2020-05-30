@@ -21,4 +21,12 @@ public class CategoryService {
     public Category getByName(String name) {
         return categoryRepository.findByName(name);
     }
+
+    public Category getById(Integer id) {
+        return categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category was not found"));
+    }
+
+    public void deleteById(Integer id) {
+        categoryRepository.deleteById(id);
+    }
 }

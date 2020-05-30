@@ -18,10 +18,10 @@ public class EmailService {
     JavaMailSender javaMailSender;
 
     public void sendMessage(Message message) {
-        if (message.getPathToAttachment() == null) {
-            sendSimpleMessage(message);
-        } else {
+        if (message.getPathToAttachment() != null) {
             sendMessageWithAttachment(message);
+        } else {
+            sendSimpleMessage(message);
         }
     }
 
@@ -38,9 +38,9 @@ public class EmailService {
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
-        MimeMessageHelper helper = null;
+        MimeMessageHelper helper;
         try {
-            helper = new MimeMessageHelper(mimeMessage, true);
+            helper = new MimeMessageHelper(mimeMessage, false, "utf-8");
 
             helper.setTo(message.getTo());
             helper.setSubject(message.getSubject());
@@ -49,6 +49,27 @@ public class EmailService {
             FileSystemResource file
                     = new FileSystemResource(new File(message.getPathToAttachment()));
             helper.addAttachment(message.getPathToAttachment(), file);
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+
+        javaMailSender.send(mimeMessage);
+    }
+
+    public void sendHtmlMessage(Message message) {
+
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+
+        MimeMessageHelper helper;
+        try {
+            helper = new MimeMessageHelper(mimeMessage, true);
+
+            helper.setTo(message.getTo());
+            helper.setSubject(message.getSubject());
+            helper.setText(message.getText(), true);
+
+            mimeMessage.saveChanges();
         } catch (MessagingException e) {
             e.printStackTrace();
         }

@@ -1,4 +1,6 @@
+<%@ page import="org.springframework.security.authentication.AuthenticationCredentialsNotFoundException" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,8 +27,13 @@
                         <div class="alert alert-info" role="alert">You've been logged out successfully.</div>
                     </c:if>
                     <c:if test="${error}">
-                        <div class="alert alert-danger" role="alert">Invalid Username or Password!</div>
+                        <%--<div class="alert alert-danger" role="alert">Invalid Username or Password!</div>--%>
+                        <div class="alert alert-danger" role="alert">${SPRING_SECURITY_LAST_EXCEPTION}</div>
                     </c:if>
+                    <c:if test="${regsucc}">
+                        <div class="alert alert-success" role="alert"><spring:message code="message.regSucc"></spring:message></div>
+                    </c:if>
+
                     <form method="post">
                         <input name="${_csrf.parameterName}" value="${_csrf.token}" type="hidden">
                         <div class="form-group">
@@ -40,6 +47,7 @@
                                    name="password">
                         </div>
                         <button type="submit" class="btn btn-default">Log in</button>
+                        <a href="/registration"><button type="button" class="btn btn-default">Registration</button></a>
                     </form>
                 </div>
             </div>

@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import ru.vnevzorov.Shop.model.user.Role;
 
 @EnableWebSecurity
@@ -18,6 +19,11 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(); // обычной энкодер, кот из пароля делает хэш. То есть в базе пароли представлены как хэш
+    }
+
+    @Bean
+    public AuthenticationFailureHandler customAuthenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
     }
 
     @Autowired
@@ -30,7 +36,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .csrf().disable()  //защита от межсайтовой подделки запроса.
             .authorizeRequests()  // очень важен порядок: от меньшего пермишена к большему(урлы с меньшим доступом ставим вначале)
                 .antMatchers("/h2-console/**", "/style/**").permitAll()
-                .antMatchers("/login*", "/registration*").permitAll()  // к данному урлу доступ есть у всех
+                .antMatchers("/api/**").permitAll()
+                .antMatchers("/login*", "/registration*", "/badUser").permitAll()  // к данному урлу доступ есть у всех
                 //.antMatchers("/shoppingcart").hasAnyAuthority(Role.ADMIN.name())
                 .anyRequest().authenticated()   // все запросы, которые не попали выше, доступны только авторизованным юзерам
             .and()  //закончили конфигурить с одним, продолжаем конфигурировать главный объект
@@ -38,7 +45,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")    //урл, на кот будут перенаправляться все запросы не авторизованным пользовтелям
                 .loginProcessingUrl("/login")   // урл, кот проверяет юзернейм и пассворд
                 .defaultSuccessUrl("/mainpage", true) //урл, кот будет показан при успешной авторизации
-                /*.failureUrl("/login?error=true")*/ //куда редирекнется при не успешной авторизации
+                //.failureUrl("/login?error=true") //куда редирекнется при не успешной авторизации
+                .failureHandler(customAuthenticationFailureHandler())
             .and()
             .logout()
                 .logoutUrl("/logout")  //куда отправить ПОСТ запрос чтобы выйти - почистится юзерская сессия
