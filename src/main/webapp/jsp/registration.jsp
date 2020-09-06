@@ -1,4 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 <html lang="en"><head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -79,6 +81,20 @@
                         </div>
                     </div>
                 </div>
+
+                <sec:authorize access="hasAuthority('ADMIN')">
+                    <div class="col-md-4 mb-3">
+                        <label for="country">Role</label>
+                        <select class="custom-select d-block w-100" id="country" name="role" required="true">
+                            <option value="">Choose...</option>
+                            <option>User</option>
+                            <option>Admin</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select role.
+                        </div>
+                    </div>
+                </sec:authorize>
 
                 <div class="mb-3">
                     <label for="email">Email <%--<span class="text-muted">(Optional)</span>--%></label>

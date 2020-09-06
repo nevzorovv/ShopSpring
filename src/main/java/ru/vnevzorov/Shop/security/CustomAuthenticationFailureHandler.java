@@ -34,11 +34,13 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
         Locale locale = localeResolver.resolveLocale(request);
 
         String errorMessage = messages.getMessage("message.badCredentials", null, new Locale("RU"));
-
-        if (exception.getMessage().equalsIgnoreCase("User is disabled")) {
+        String exceptionMessage = exception.getMessage();
+        if (exceptionMessage.equalsIgnoreCase("User is disabled")) {
             errorMessage = messages.getMessage("auth.message.disabled", null, new Locale("RU"));
-        /*} else if (exception.getMessage().equalsIgnoreCase("User account has expired")) {
-            errorMessage = messages.getMessage("auth.message.expired", null, new Locale("RU"));*/
+        } else if (exceptionMessage.equalsIgnoreCase("User account has expired")) {
+            errorMessage = messages.getMessage("auth.message.accountCreatedByAdmin", null, new Locale("RU"));
+        } else if (exceptionMessage.equalsIgnoreCase("User credentials have expired")) {
+            errorMessage = messages.getMessage("auth.message.credentialsExpired", null, new Locale("RU"));
         }
 
         request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, errorMessage);

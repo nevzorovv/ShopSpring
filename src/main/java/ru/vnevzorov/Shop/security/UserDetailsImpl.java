@@ -4,7 +4,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.vnevzorov.Shop.model.user.AbstractUser;
+import ru.vnevzorov.Shop.model.user.Admin;
+import ru.vnevzorov.Shop.model.user.Role;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,7 +36,11 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        if (abstractUser.isPasswordChanged() == false) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @Override
@@ -43,7 +50,17 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        //Админы должны менять пароль каждые 90 дней
+        if (abstractUser.getRole() == Role.ADMIN) {
+            Admin admin = (Admin) abstractUser;
+            if (LocalDate.now().minusDays(90).isAfter(admin.getLastPasswordUpdate())) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
     }
 
     @Override

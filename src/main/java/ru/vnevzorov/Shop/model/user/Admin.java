@@ -11,6 +11,8 @@ public class Admin extends AbstractUser {
     private String testField1;
     private String testField2;
 
+    private LocalDate lastPasswordUpdate;
+
     private boolean sendReports;
 
     public Admin() {
@@ -22,6 +24,7 @@ public class Admin extends AbstractUser {
         this.testField1 = testField1;
         this.testField2 = testField2;
         this.sendReports = sendReports;
+        this.lastPasswordUpdate = LocalDate.now();
     }
 
     @Override
@@ -30,6 +33,7 @@ public class Admin extends AbstractUser {
                 "testField1='" + testField1 + '\'' +
                 ", testField2='" + testField2 + '\'' +
                 ", sendReports=" + sendReports +
+                ", lastPasswordUpdate=" + lastPasswordUpdate +
                 '}';
     }
 
@@ -71,5 +75,13 @@ public class Admin extends AbstractUser {
 
     public void setSendReports(boolean sendReports) {
         this.sendReports = sendReports;
+    }
+
+    public LocalDate getLastPasswordUpdate() {
+        return lastPasswordUpdate;
+    }
+
+    public void setLastPasswordUpdate(LocalDate lastPasswordUpdate) {
+        this.lastPasswordUpdate = lastPasswordUpdate;
     }
 }

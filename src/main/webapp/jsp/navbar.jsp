@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html lang="en">
 <head>
@@ -32,21 +33,42 @@
                         ${user.firstName} ${user.lastName}
                     </c:if>
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <%--<div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <c:if test="${user.role == 'ADMIN'}">
                         <a class="dropdown-item" href="#">My profile</a>
                         <a class="dropdown-item" href="/addproduct">Add product</a>
                         <a class="dropdown-item" href="/order_management">Order Management</a>
+                        <a class="dropdown-item" href="/register_new_user">Register new user</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="/logout">Log out</a>
                     </c:if>
                     <c:if test="${user.role == 'USER'}">
                         <a class="dropdown-item" href="#">My profile</a>
                         <a class="dropdown-item" href="/shoppingcart">Shopping cart <c:if test="${countItems != 0}">(${countItems})</c:if></a>
-                        <a class="dropdown-item" href="/myorders">My orders[reserved]</a>
+                        <a class="dropdown-item" href="/myorders">My orders</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="/logout">Log out</a>
                     </c:if>
+                    <c:if test="${user == 'Guest'}">
+                        <a class="dropdown-item" href="/signin">Sign in</a>
+                    </c:if>
+                </div>--%>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <sec:authorize access="hasAuthority('ADMIN')">
+                        <a class="dropdown-item" href="#">My profile</a>
+                        <a class="dropdown-item" href="/addproduct">Add product</a>
+                        <a class="dropdown-item" href="/order_management">Order Management</a>
+                        <a class="dropdown-item" href="/register_new_user">Register new user</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/logout">Log out</a>
+                    </sec:authorize>
+                    <sec:authorize access="hasAuthority('USER')">
+                        <a class="dropdown-item" href="#">My profile</a>
+                        <a class="dropdown-item" href="/shoppingcart">Shopping cart <c:if test="${countItems != 0}">(${countItems})</c:if></a>
+                        <a class="dropdown-item" href="/myorders">My orders</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/logout">Log out</a>
+                    </sec:authorize>
                     <c:if test="${user == 'Guest'}">
                         <a class="dropdown-item" href="/signin">Sign in</a>
                     </c:if>

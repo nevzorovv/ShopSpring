@@ -37,7 +37,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .authorizeRequests()  // очень важен порядок: от меньшего пермишена к большему(урлы с меньшим доступом ставим вначале)
                 .antMatchers("/h2-console/**", "/style/**").permitAll()
                 .antMatchers("/api/**").permitAll()
-                .antMatchers("/login*", "/registration*", "/badUser").permitAll()  // к данному урлу доступ есть у всех
+                .antMatchers("/login*", "/registration*", "/badUser", "/password_change").permitAll()  // к данному урлу доступ есть у всех
                 //.antMatchers("/shoppingcart").hasAnyAuthority(Role.ADMIN.name())
                 .anyRequest().authenticated()   // все запросы, которые не попали выше, доступны только авторизованным юзерам
             .and()  //закончили конфигурить с одним, продолжаем конфигурировать главный объект

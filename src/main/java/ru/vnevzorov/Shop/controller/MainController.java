@@ -2,8 +2,11 @@ package ru.vnevzorov.Shop.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tomcat.jni.Local;
 import org.dom4j.rule.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +20,7 @@ import ru.vnevzorov.Shop.model.Category;
 import ru.vnevzorov.Shop.model.Order;
 import ru.vnevzorov.Shop.model.Product;
 import ru.vnevzorov.Shop.model.user.AbstractUser;
+import ru.vnevzorov.Shop.model.user.Admin;
 import ru.vnevzorov.Shop.model.user.Role;
 import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.repository.CategoryRepository;
@@ -26,12 +30,16 @@ import ru.vnevzorov.Shop.service.ProductService;
 import ru.vnevzorov.Shop.service.ShoppingCartService;
 import ru.vnevzorov.Shop.service.user.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Locale;
+import java.util.stream.Stream;
 
 @Controller
-@ControllerAdvice  // в этом контроллере есть метод который должен распростарняться на все другие контроллеры (ModelAttribut)
+@ControllerAdvice(basePackages = "ru.vnevzorov.Shop.controller")  // в этом контроллере есть метод который должен распростарняться на другие контроллеры в указанном пакете (ModelAttribute)
 public class MainController {
     private static final Logger log = LogManager.getLogger();
 
@@ -53,8 +61,12 @@ public class MainController {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
+    @Qualifier("messageSource")
+    @Autowired
+    private MessageSource messages;
+
     @GetMapping("mainpage")
-    public ModelAndView getMainpage() {
+    public ModelAndView getMainpage(Model model, HttpServletRequest request) {
         log.info("GET: /mainpage");
 
         ModelAndView modelAndView = new ModelAndView("jsp/mainpage.jsp");
@@ -63,7 +75,14 @@ public class MainController {
         modelAndView.addObject("category", new Category());
         modelAndView.addObject("number_of_positions", 10);
 
-        log.info("returning model:" + modelAndView.getModel().toString());
+        if (model.getAttribute("user") != null && ((AbstractUser) model.getAttribute("user")).getRole() == Role.ADMIN) {
+            Admin admin = (Admin) model.getAttribute("user");
+            //admin.setLastPasswordUpdate(LocalDate.now().minusDays(87)); FOR TESTING
+            Locale locale = request.getLocale();
+            if (admin.getLastPasswordUpdate().plusDays(85).isBefore(LocalDate.now())) {
+                modelAndView.addObject("passExpiresSoon", messages.getMessage("message.passExpiresSoon", null, request.getLocale()));
+            }
+        }
 
         return modelAndView;
     }
@@ -191,31 +210,4 @@ public class MainController {
             model.addAttribute("user", currentUser);
         }
     }
-
-    //@ModelAttribute
-    public User getUser() { // так тоже можно. В модель будет добавлять результат этого метода по имени класса(ключ)
-        return userService.getUserByLogin("firstUser");
-    }
-
-    /*********************************  TEST  *****************************/
-
-    @GetMapping("hello")
-    //@RequestMapping("hello")
-    public ModelAndView helloWorld() { //ModelAndView - специальный класс для передачи данных для jsp
-        ModelAndView modelAndView = new ModelAndView("jsp/helloworld.jsp");
-        modelAndView.addObject("hello", "this is JSP");
-        Category category = categoryRepository.findById(1).get();
-        modelAndView.addObject("category", category);
-        return modelAndView;
-    }
-
-    @PostMapping("saveCategory")
-    public /*ModelAndView*/ RedirectView saveCategory(@ModelAttribute Category category) {
-        System.out.println("category = " + category);
-
-        return new RedirectView("hello");
-        //return new ModelAndView("helloworld.jsp");
-    }
-
-
 }

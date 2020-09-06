@@ -33,6 +33,9 @@
                     <c:if test="${regsucc}">
                         <div class="alert alert-success" role="alert"><spring:message code="message.regSucc"></spring:message></div>
                     </c:if>
+                    <c:if test="${passSucChanged}">
+                        <div class="alert alert-success" role="alert"><spring:message code="message.passSucChanged"></spring:message></div>
+                    </c:if>
 
                     <form method="post">
                         <input name="${_csrf.parameterName}" value="${_csrf.token}" type="hidden">

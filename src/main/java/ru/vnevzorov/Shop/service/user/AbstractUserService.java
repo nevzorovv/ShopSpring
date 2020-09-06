@@ -5,6 +5,8 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.vnevzorov.Shop.exception.NotFoundException;
 import ru.vnevzorov.Shop.exception.UserAlreadyExistException;
 import ru.vnevzorov.Shop.model.VerificationToken;
 import ru.vnevzorov.Shop.model.user.AbstractUser;
@@ -39,7 +41,18 @@ public class AbstractUserService {
         return abstractUserRepository.findAll();
     }
 
+    public AbstractUser getById(Long id) {
+        Optional<AbstractUser> user = abstractUserRepository.findById(id);
+
+        if (user.isPresent()) {
+            return user.get();
+        } else {
+            throw new NotFoundException("No such user");
+        }
+    }
+
     public AbstractUser getByLogin(String login) {
+
         return abstractUserRepository.findByLogin(login);
     }
 
@@ -53,6 +66,27 @@ public class AbstractUserService {
 
     public VerificationToken getVerificationToken(String token) {
         return tokenRepository.findByToken(token);
+    }
+
+    public boolean checkCredentials(String login, String password) {
+        AbstractUser abstractUser = abstractUserRepository.findByLogin(login);
+        if (abstractUser != null) {
+            //if (abstractUser.getPassword().equals(passwordEncoder.encode(password))) {
+            if (passwordEncoder.matches(password, abstractUser.getPassword())) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    @Transactional
+    public void changePassword(String login, String newEncodedPassword) {
+        AbstractUser abstractUser = abstractUserRepository.findByLogin(login);
+        abstractUser.setPassword(newEncodedPassword);
+        abstractUser.setPasswordChanged(true);
     }
 
     public void registerNewUserAccount(HttpServletRequest request) throws UserAlreadyExistException {

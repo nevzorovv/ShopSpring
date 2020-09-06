@@ -1,8 +1,6 @@
 package ru.vnevzorov.Shop.exception;
 
-import java.io.IOException;
-
-public class UserAlreadyExistException extends IOException {
+public class UserAlreadyExistException extends Exception {
     private String message;
     private boolean emailAlreadyExists;
     private boolean loginAlreadyExists;

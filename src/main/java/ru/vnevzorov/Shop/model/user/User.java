@@ -1,5 +1,6 @@
 package ru.vnevzorov.Shop.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ru.vnevzorov.Shop.model.Order;
 import ru.vnevzorov.Shop.model.ShoppingCart;
 
@@ -21,6 +22,7 @@ public class User extends AbstractUser {
     private String testField2;
 
     //Тут колонка не создается. Сюда подтянутся все заказы юзера
+    @JsonIgnoreProperties("user")
     @OneToMany(mappedBy = "user") // "user" - это поле в Order
     private List<Order> orders = new ArrayList<>();
 

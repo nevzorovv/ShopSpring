@@ -1,5 +1,6 @@
 package ru.vnevzorov.Shop.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,21 +14,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
+import reactor.core.publisher.Mono;
 import ru.vnevzorov.Shop.ApplicationEvent.OnRegistrationCompleteEvent;
-import ru.vnevzorov.Shop.exception.UserAlreadyExistException;
 import ru.vnevzorov.Shop.model.VerificationToken;
 import ru.vnevzorov.Shop.model.user.AbstractUser;
 import ru.vnevzorov.Shop.model.user.Role;
 import ru.vnevzorov.Shop.model.user.User;
+import ru.vnevzorov.Shop.rest.dto.user.AbstractUserRestDTO;
 import ru.vnevzorov.Shop.service.email.EmailService;
 import ru.vnevzorov.Shop.service.user.AbstractUserService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.Locale;
 
 @Controller
@@ -61,6 +63,18 @@ public class RegistrationController {
         return new ModelAndView("jsp/registration.jsp");
     }
 
+    //registration by admin user
+    @GetMapping("/register_new_user")
+    public ModelAndView registerNewUser(Model model) {
+        log.info("GET: /register_new_user");
+
+        if (model.getAttribute("newUser") == null) {
+            model.addAttribute("newUser", new User());
+        }
+
+        return new ModelAndView("jsp/registration.jsp");
+    }
+
     @PostMapping("/registration")
     public RedirectView registration(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
         String firstName = request.getParameter("firstName");
@@ -70,6 +84,7 @@ public class RegistrationController {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String passwordConf = request.getParameter("passwordConf");
+        String role = request.getParameter("role");
 
         AbstractUser newUser = new User();
         newUser.setFirstName(firstName);
@@ -97,12 +112,17 @@ public class RegistrationController {
         }
 
         newUser.setPassword(passwordEncoder.encode(password));
-        newUser.setRole(Role.USER);
+        if (role == null) {
+            newUser.setRole(Role.USER);
+        } else {
+            newUser.setRole(Role.valueOf(role.toUpperCase()));
+            newUser.setPasswordChanged(false);
+        }
+
         abstractUserService.save(newUser);
 
-        String appUrl = request.getContextPath();
         try {
-            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(appUrl, request.getLocale(), abstractUserService.getByLogin(username)));
+            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(request.getContextPath(), request.getLocale(), abstractUserService.getByLogin(username)));
         } catch (RuntimeException e) {
             log.error("There is an exception in the logic executed after the publishing of the event");
         }
@@ -141,78 +161,49 @@ public class RegistrationController {
         return modelAndView;
     }
 
-   /* @GetMapping("/regconfirmation")
-    public RedirectView regConfirmation(@RequestParam("login") String login, @RequestParam("value") String hash, RedirectAttributes redirectAttributes) {
-        log.info("GET: /regconfirmation?login=" + login + "&value=" + hash);
+    @GetMapping("/password_change")
+    public ModelAndView passwordChange(Model model) {
+        log.info("GET: /password_change");
 
-        AbstractUser user = abstractUserService.getByLogin(login);
-        if (user != null && user.hashCode() == Long.parseLong(hash)) {
-            user.setEmailConfirmed(true);
-            redirectAttributes.addFlashAttribute("regConfirmed", true);
-            return new RedirectView("/login");
-        }
-
-        return null;
-    }*/
-
-    /*@PostMapping("/registration")
-    public RedirectView registration(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-        String birthday = request.getParameter("birthday");
-        String email = request.getParameter("email");
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
-        String passwordConf = request.getParameter("passwordConf");
-
-        AbstractUser newUser = new User();
-        newUser.setFirstName(firstName);
-        newUser.setLastName(lastName);
-        newUser.setBirthday(parseDate(birthday));
-        newUser.setLogin(username);
-        newUser.setEmail(email);
-
-        if (abstractUserService.getByEmail(email) != null) {
-            redirectAttributes.addFlashAttribute("doesEmailRegistered", true);
-            redirectAttributes.addFlashAttribute("newUser", newUser);
-            return new RedirectView("/registration");
-        }
-
-        if (abstractUserService.getByLogin(username) != null) {
-            redirectAttributes.addFlashAttribute("doesUsernameExist", true);
-            redirectAttributes.addFlashAttribute("newUser", newUser);
-            return new RedirectView("/registration");
-        }
-
-        if (!password.equals(passwordConf)) {
-            redirectAttributes.addFlashAttribute("doesPasswordsMatch", false);
-            redirectAttributes.addFlashAttribute("newUser", newUser);
-            return new RedirectView("/registration");
-        }
-
-        newUser.setPassword(passwordEncoder.encode(password));
-        newUser.setRole(Role.USER);
-        abstractUserService.save(newUser);
-
-        emailService.sendMessage(new Message(email, "Confirm your email",
-                "Please confirm your email using this link: \nhttp://localhost:8080/regconfirmation?login=" + username + "&value=" + abstractUserService.getByLogin(username).hashCode()));
-
-        return new RedirectView("/login");
+        return new ModelAndView("jsp/password_change.jsp");
     }
 
-    @GetMapping("/regconfirmation")
-    public RedirectView regConfirmation(@RequestParam("login") String login, @RequestParam("value") String hash, RedirectAttributes redirectAttributes) {
-        log.info("GET: /regconfirmation?login=" + login + "&value=" + hash);
+    @PostMapping("/password_change")
+    public RedirectView passwordChange(HttpServletRequest request, RedirectAttributes redirectAttributes) throws JsonProcessingException {
+        String login = request.getParameter("username");
+        String password = request.getParameter("password");
+        String newPassword = request.getParameter("newPassword");
+        String passwordConf = request.getParameter("passwordConf");
 
-        AbstractUser user = abstractUserService.getByLogin(login);
-        if (user != null && user.hashCode() == Long.parseLong(hash)) {
-            user.setEmailConfirmed(true);
-            redirectAttributes.addFlashAttribute("regConfirmed", true);
-            return new RedirectView("/login");
+        if (abstractUserService.checkCredentials(login, password)) {
+            if (newPassword.equals(passwordConf)) {
+                String passwordEncoded = passwordEncoder.encode(newPassword);
+
+                AbstractUserRestDTO updatedAbstractUser = new AbstractUserRestDTO();
+                updatedAbstractUser.setId(abstractUserService.getByLogin(login).getId());
+                updatedAbstractUser.setLogin(login);
+                updatedAbstractUser.setPassword(passwordEncoded);
+
+                WebClient.Builder client = WebClient.builder();
+                AbstractUserRestDTO mono = client.build()
+                        .put()
+                        .uri("http://localhost:8080/api/users/passwordUpdate/" + updatedAbstractUser.getId())
+                        .body(Mono.just(updatedAbstractUser), AbstractUserRestDTO.class)
+                        .retrieve()
+                        .bodyToMono(AbstractUserRestDTO.class)
+                        .block();
+
+            } else {
+                redirectAttributes.addFlashAttribute("passwordsMismatch", messages.getMessage("message.passwordsMismatch", null, request.getLocale()));
+                return new RedirectView("/password_change");
+            }
+        } else {
+            redirectAttributes.addFlashAttribute("wrong_credentials", messages.getMessage("message.badCredentials", null, request.getLocale()));
+            return new RedirectView("/password_change");
         }
 
-        return null;
-    }*/
+        return new RedirectView("/login?passSucChanged&lang=" + request.getLocale().getLanguage());
+    }
 
     private LocalDate parseDate(String date) {
         String[] dateParts = date.split("-");

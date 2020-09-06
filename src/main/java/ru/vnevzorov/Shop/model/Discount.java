@@ -1,5 +1,7 @@
 package ru.vnevzorov.Shop.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ public class Discount {
     private Double value;
     private String type;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "discount")
     private List<Product> products = new ArrayList<>();
 

@@ -34,7 +34,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     private void confirmRegistration(OnRegistrationCompleteEvent event) {
         AbstractUser abstractUser = event.getAbstractUser();
         String token = UUID.randomUUID().toString();
-        abstractUserService.createVerificationToken(abstractUser, token); //TODO нет expiryDate
+        abstractUserService.createVerificationToken(abstractUser, token);
 
         String recipientAddress = abstractUser.getEmail();
         String subject = "Registration Confirmation";
@@ -44,4 +44,5 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         Message confirmationMessage = new Message(recipientAddress, subject, message + "<br/><a href=\"http://localhost:8080" + confirmationUrl + "\">Confirm registration</a>");
         emailService.sendHtmlMessage(confirmationMessage);
     }
+
 }

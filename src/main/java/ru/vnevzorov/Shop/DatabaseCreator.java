@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.vnevzorov.Shop.enumeration.Status;
@@ -13,12 +14,14 @@ import ru.vnevzorov.Shop.model.user.Admin;
 import ru.vnevzorov.Shop.model.user.Role;
 import ru.vnevzorov.Shop.model.user.User;
 import ru.vnevzorov.Shop.repository.*;
+import ru.vnevzorov.Shop.security.UserDetailsImpl;
 import ru.vnevzorov.Shop.service.user.AbstractUserService;
 import ru.vnevzorov.Shop.service.user.UserService;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Component
 @Profile("dev")
@@ -117,12 +120,16 @@ public class DatabaseCreator {
         productRepository.save(evgeniOneginProduct);
 
         User user1 = new User("Vladimir", passwordEncoder.encode("123"), "Vladimir", "Nevzorov", LocalDate.of(2000, 1, 1), "pupkin.1994@yandex.ru", "testUserField1", "testUserField2");
-        user1.setEmailConfirmed(true);
+        user1.setEnabled(true);
+        user1.setPasswordChanged(true);
         User user2 = new User("secondUser", passwordEncoder.encode("123"), "name1", "lastName1", LocalDate.of(2000, 1, 1), "testEmail", "testUserField1", "testUserField2");
-        user2.setEmailConfirmed(true);
+        user2.setEnabled(true);
+        user2.setPasswordChanged(true);
         Admin admin1 = new Admin("Vladimir_admin", passwordEncoder.encode("123"), "Vladimir", "Nevzorov", LocalDate.of(2000, 1, 1), "pupkin.1994@yandex.ru", "testAdminField1", "testAdminField2", true);
-        admin1.setEmailConfirmed(true);
+        admin1.setEnabled(true);
+        admin1.setPasswordChanged(true);
         admin1.setRole(Role.ADMIN);
+
         userRepository.save(user1);
         userRepository.save(user2);
         abstractUserService.save(admin1);

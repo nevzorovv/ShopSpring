@@ -10,6 +10,13 @@
 
 <%@ include file="navbar.jsp" %>
 
+
+<div class="col-md-4 col-md-offset-3">
+    <c:if test="${passExpiresSoon != null}">
+        <div class="alert alert-info" role="alert">${passExpiresSoon}</div>
+    </c:if>
+</div>
+
 <header>Main Page</header>
 
 <%--<nav>

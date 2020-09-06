@@ -1,5 +1,6 @@
 package ru.vnevzorov.Shop.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -24,6 +25,7 @@ public abstract class AbstractUser {
     @Column(unique = true, nullable = false)
     private String login;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
@@ -40,9 +42,9 @@ public abstract class AbstractUser {
     private String email;
 
     @Column(nullable = false)
-    private boolean emailConfirmed;
-
     private boolean enabled;
+
+    private boolean passwordChanged;
 
     /***************Spring Data JPA Auditing*******************/
     @Column(name = "created_date", nullable = false, updatable = false)
@@ -54,8 +56,15 @@ public abstract class AbstractUser {
     private LocalDateTime modifiedDate;
     /***************Spring Data JPA Auditing*******************/
 
+    public AbstractUser(Long id, String login, String password) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+    }
+
     public AbstractUser() {
         this.enabled = false;
+        this.passwordChanged = true;
     }
 
     public AbstractUser(String login, String password, String firstName, String lastName, LocalDate birthday, String email) {
@@ -65,8 +74,8 @@ public abstract class AbstractUser {
         this.lastName = lastName;
         this.birthday = birthday;
         this.email = email;
-        this.emailConfirmed = false;
         this.enabled = false;
+        this.passwordChanged = true;
     }
 
     @Override
@@ -79,7 +88,6 @@ public abstract class AbstractUser {
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", role='" + role + '\'' +
-                ", emailConfirmed='" + emailConfirmed + '\'' +
                 ", enabled='" + enabled + '\'' +
                 '}';
     }
@@ -96,14 +104,13 @@ public abstract class AbstractUser {
                 Objects.equals(firstName, that.firstName) &&
                 Objects.equals(lastName, that.lastName) &&
                 Objects.equals(birthday, that.birthday) &&
-                Objects.equals(emailConfirmed, that.emailConfirmed) &&
                 Objects.equals(enabled, that.enabled) &&
                 Objects.equals(email, that.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, login, password, firstName, lastName, email, role, birthday, emailConfirmed, enabled);
+        return Objects.hash(id, login, password, firstName, lastName, email, role, birthday, enabled);
     }
 
     public Long getId() {
@@ -128,6 +135,9 @@ public abstract class AbstractUser {
 
     public void setPassword(String password) {
         this.password = password;
+        if (this.getRole() == Role.ADMIN) {
+            ((Admin) this).setLastPasswordUpdate(LocalDate.now());
+        }
     }
 
     public String getFirstName() {
@@ -186,19 +196,19 @@ public abstract class AbstractUser {
         this.modifiedDate = modifiedDate;
     }
 
-    public boolean isEmailConfirmed() {
-        return emailConfirmed;
-    }
-
-    public void setEmailConfirmed(boolean emailConfirmed) {
-        this.emailConfirmed = emailConfirmed;
-    }
-
     public boolean isEnabled() {
         return enabled;
     }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isPasswordChanged() {
+        return passwordChanged;
+    }
+
+    public void setPasswordChanged(boolean passwordChanged) {
+        this.passwordChanged = passwordChanged;
     }
 }

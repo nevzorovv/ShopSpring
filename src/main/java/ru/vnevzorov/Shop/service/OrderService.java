@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vnevzorov.Shop.enumeration.Status;
+import ru.vnevzorov.Shop.exception.NotFoundException;
 import ru.vnevzorov.Shop.model.Order;
 import ru.vnevzorov.Shop.model.OrderedProduct;
 import ru.vnevzorov.Shop.model.ShoppingCart;
@@ -47,6 +48,14 @@ public class OrderService {
 
     @Autowired
     UserDetailsServiceImpl userDetailsService;
+
+    public Order getById(Long id) {
+        return orderRepository.findById(id).orElseThrow(() -> new NotFoundException("Order was not found"));
+    }
+
+    public void deleteById(Long id) {
+        orderRepository.deleteById(id);
+    }
 
     @Deprecated
     public Order prepareNewOrder(String shoppingCartId) {

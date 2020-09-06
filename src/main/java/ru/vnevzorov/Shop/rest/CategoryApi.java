@@ -16,7 +16,7 @@ import java.util.Collections;
 public class CategoryApi {
 
     @Autowired
-    CategoryService categoryService;
+    private CategoryService categoryService;
 
     @GetMapping
     public Iterable<Category> getAll() {
@@ -34,13 +34,18 @@ public class CategoryApi {
         throw new MethodNotAllowedException(HttpMethod.POST, Collections.singleton(HttpMethod.GET));
     }
 
+    /*@PutMapping("/{id}")
+    public Category update(@PathVariable Integer id, @RequestBody Category category) {
+        throw new MethodNotAllowedException(HttpMethod.PUT, Collections.singleton(HttpMethod.GET));
+    }*/
+
     @PutMapping("/{id}")
     public Category update(@PathVariable Integer id, @RequestBody Category category) {
-        throw new MethodNotAllowedException(HttpMethod.POST, Collections.singleton(HttpMethod.GET));
+        throw new MethodNotAllowedException(HttpMethod.PUT, Collections.singleton(HttpMethod.GET));
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
-        categoryService.deleteById(id);
+        throw new MethodNotAllowedException(HttpMethod.DELETE, Collections.singleton(HttpMethod.GET));
     }
 }
